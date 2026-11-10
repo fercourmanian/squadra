@@ -781,151 +781,25 @@ function sbUnsubscribe(){
 // ============================================
 // APP DATA
 // ============================================
-var TODAY="2026-03-22";
-var CLUB={name:"Club Náutico San Isidro",seasonEndMonth:11,inactivityDays:45};
-var SP=[{id:1,n:"Carlos Méndez",ini:"CM"},{id:2,n:"Martín Gómez",ini:"MG"},{id:3,n:"Diego Peralta",ini:"DP"}];
-var TEAMS=[
- {id:1,name:"Los Pumas A",cat:"Sub-12",anio:"2014",tmp:"2026",color:"#1a7a3c",fmt:"7v7",dur:25,
-  staff:[{sid:1,rol:"principal"},{sid:3,rol:"asistente"}],
-  j:[{id:1,n:"Tomás García",p:"Portero",i:"TG",num:1},
-     {id:2,n:"Mateo López",p:"Defensa",i:"ML",num:3},
-     {id:3,n:"Santiago Ruiz",p:"Defensa",i:"SR",num:4},
-     {id:4,n:"Facundo Díaz",p:"Defensa",i:"FD",num:5},
-     {id:5,n:"Valentín Sosa",p:"Defensa",i:"VS",num:6},
-     {id:6,n:"Ignacio Pérez",p:"Mediocampo",i:"IP",num:7},
-     {id:7,n:"Luciano Torres",p:"Mediocampo",i:"LT",num:8},
-     {id:8,n:"Agustín Molina",p:"Mediocampo",i:"AM",num:10},
-     {id:9,n:"Benjamín Vargas",p:"Mediocampo",i:"BV",num:11},
-     {id:10,n:"Nicolás Castro",p:"Mediocampo",i:"NC",num:14},
-     {id:11,n:"Ezequiel Flores",p:"Delantero",i:"EF",num:9},
-     {id:12,n:"Rodrigo Silva",p:"Delantero",i:"RS",num:17},
-     {id:13,n:"Thiago Romero",p:"Delantero",i:"TR",num:11}],
-  cv:[
-   {id:101,tipo:"partido",rival:"vs. Atlético Norte",fecha:"2026-02-22",hora:"10:00",lugar:"Cancha A",lim:"2026-02-21",can:false,esp:{},
-    jug:[1,2,3,4,5,6,7,8,9,10,11,12],resp:{1:"si",2:"si",3:"si",4:"si",5:"si",6:"si",7:"si",8:"si",9:"si",10:"no",11:"si",12:"si"},man:{},late:{},fotos:[],chat:[]},
-   {id:102,tipo:"entrenamiento",rival:"Entrenamiento",fecha:"2026-02-25",hora:"17:00",lugar:"Cancha A",lim:"",can:false,
-    jug:[1,2,3,4,5,6,7,8,9,10,11,12,13],resp:{1:"si",2:"si",3:"no",4:"si",5:"si",6:"si",7:"no",8:"si",9:"si",10:"si",11:"si",12:"no",13:"si"},man:{},late:{},fotos:[],chat:[]},
-   {id:103,tipo:"entrenamiento",rival:"Entrenamiento",fecha:"2026-02-27",hora:"17:00",lugar:"Cancha A",lim:"",can:false,
-    jug:[1,2,3,4,5,6,7,8,9,10,11,12,13],resp:{1:"si",2:"no",3:"si",4:"si",5:"si",6:"si",7:"si",8:"no",9:"si",10:"si",11:"si",12:"si",13:"si"},man:{},late:{},fotos:[],chat:[]},
-   {id:104,tipo:"partido",rival:"vs. San Martín",fecha:"2026-03-01",hora:"10:00",lugar:"Cancha B",lim:"2026-02-28",can:false,esp:{},
-    jug:[1,2,3,4,5,6,7,8,9,10,11,13],resp:{1:"si",2:"si",3:"si",4:"si",5:"si",6:"si",7:"si",8:"si",9:"no",10:"si",11:"si",13:"si"},man:{},late:{},fotos:[],chat:[]},
-   {id:105,tipo:"entrenamiento",rival:"Entrenamiento",fecha:"2026-03-04",hora:"17:00",lugar:"Cancha A",lim:"",can:false,
-    jug:[1,2,3,4,5,6,7,8,9,10,11,12,13],resp:{1:"si",2:"si",3:"si",4:"no",5:"si",6:"si",7:"si",8:"si",9:"si",10:"si",11:"no",12:"si",13:"si"},man:{},late:{},fotos:[],chat:[]},
-   {id:106,tipo:"entrenamiento",rival:"Entrenamiento",fecha:"2026-03-06",hora:"17:00",lugar:"Cancha A",lim:"",can:false,
-    jug:[1,2,3,4,5,6,7,8,9,10,11,12,13],resp:{1:"si",2:"si",3:"si",4:"si",5:"no",6:"si",7:"si",8:"si",9:"si",10:"si",11:"si",12:"si",13:"no"},man:{},late:{},fotos:[],chat:[]},
-   {id:107,tipo:"partido",rival:"vs. Racing Juvenil",fecha:"2026-03-08",hora:"10:00",lugar:"Cancha A",lim:"2026-03-07",can:false,esp:{},
-    jug:[1,2,3,4,5,6,7,8,9,10,11,12,13],resp:{1:"si",2:"si",3:"si",4:"si",5:"si",6:"si",7:"si",8:"si",9:"no",10:"no",11:"si",12:"si",13:"si"},man:{},late:{},fotos:[],chat:[]},
-   {id:108,tipo:"entrenamiento",rival:"Entrenamiento",fecha:"2026-03-11",hora:"17:00",lugar:"Cancha A",lim:"",can:false,
-    jug:[1,2,3,4,5,6,7,8,9,10,11,12,13],resp:{1:"si",2:"si",3:"si",4:"si",5:"si",6:"no",7:"si",8:"si",9:"si",10:"si",11:"si",12:"si",13:"si"},man:{},late:{},fotos:[],chat:[]},
-   {id:109,tipo:"entrenamiento",rival:"Entrenamiento",fecha:"2026-03-13",hora:"17:00",lugar:"Cancha A",lim:"",can:false,
-    jug:[1,2,3,4,5,6,7,8,9,10,11,12,13],resp:{1:"si",2:"si",3:"no",4:"si",5:"si",6:"si",7:"si",8:"si",9:"si",10:"si",11:"si",12:"no",13:"si"},man:{},late:{},fotos:[],chat:[]},
-   {id:110,tipo:"partido",rival:"vs. Náutico Tigre",fecha:"2026-03-15",hora:"10:00",lugar:"Cancha B",lim:"2026-03-14",can:false,esp:{},
-    jug:[1,2,3,5,6,7,8,9,10,11,12,13],resp:{1:"si",2:"si",3:"si",5:"si",6:"si",7:"si",8:"si",9:"si",10:"si",11:"si",12:"si",13:"si"},man:{},late:{},fotos:[],chat:[]},
-   {id:111,tipo:"entrenamiento",rival:"Entrenamiento",fecha:"2026-03-18",hora:"17:00",lugar:"Cancha A",lim:"",can:false,
-    jug:[1,2,3,4,5,6,7,8,9,10,11,12,13],resp:{1:"si",2:"si",3:"si",4:"si",5:"si",6:"si",7:"no",8:"si",9:"si",10:"si",11:"si",12:"si",13:"si"},man:{},late:{},fotos:[],chat:[]},
-   {id:112,tipo:"entrenamiento",rival:"Entrenamiento",fecha:"2026-03-20",hora:"17:00",lugar:"Cancha A",lim:"",can:false,
-    jug:[1,2,3,4,5,6,7,8,9,10,11,12,13],resp:{1:"si",2:"si",3:"si",4:"si",5:"si",6:"si",7:"si",8:"no",9:"si",10:"si",11:"si",12:"si",13:"si"},man:{},late:{},fotos:[],chat:[]},
-   {id:1,tipo:"partido",rival:"vs. Deportivo Sur",fecha:"2026-03-22",hora:"10:00",lugar:"Cancha A",lim:"2026-03-21",can:false,esp:{entrada:"pago",entradaMonto:"$300",estac:"gratis",estacMonto:""},
-    jug:[1,2,3,4,5,6,7,8,9,10,11,12,13],
-    resp:{1:"si",2:"si",3:"no",4:"pendiente",5:"si",6:"si",7:"pendiente",8:"si",9:"no",10:"si",11:"si",12:"pendiente",13:"si"},
-    man:{},late:{},fotos:[],
-    rsvpLog:{4:[{aid:2,name:"Laura Díaz",rel:"Mamá",resp:"si",t:"Hoy 9:20"}]},
-    chat:[
-     {id:1,autor:"Carlos Méndez",rol:"dt",txt:"Recuerden llegar 20 min antes. Traigan agua y rodilleras.",t:"Mar 9:15"},
-     {id:2,autor:"Martín Díaz",rol:"padre",txt:"DT, Facundo llega 10 min tarde, tiene turno médico.",t:"Mar 9:42"},
-     {id:3,autor:"Carlos Méndez",rol:"dt",txt:"Sin problema Martín, avísame cuando estén llegando.",t:"Mar 9:50"},
-     {id:4,autor:"Laura García",rol:"padre",txt:"¿Hay estacionamiento en la cancha?",t:"Mar 10:05"},
-     {id:5,autor:"Carlos Méndez",rol:"dt",txt:"Sí, hay estacionamiento gratuito sobre la calle lateral.",t:"Mar 10:08"}
-    ]},
-   {id:2,tipo:"gira",rival:"Gira San Fernando 2026",fecha:"2026-03-29",esp:{entrada:"gratis",entradaMonto:"",estac:"pago",estacMonto:"$200"},hora:"08:00",lugar:"Club San Fernando",lim:"2026-03-26",can:false,
-    logistica:{encuentro:"Estacionamiento club",horaEnc:"07:30",trans:"Micro contratado",almuerzo:"Incluido",costo:"$2.500"},
-    jug:[1,2,3,4,5,6,7,8,9,10,11,12,13],
-    resp:{1:"si",2:"si",3:"si",4:"pendiente",5:"si",6:"si",7:"si",8:"si",9:"pendiente",10:"si",11:"si",12:"si",13:"si"},
-    man:{},late:{},fotos:[],chat:[],
-    partidos:[
-     {id:1,rival:"Racing Juniors",hora:"09:00",cancha:"C1",plantel:[1,2,3,4,5,6,7,8,9,10,11],res:{us:2,them:1,ev:[]}},
-     {id:2,rival:"Belgrano FC",hora:"11:00",cancha:"C1",plantel:[],res:{us:0,them:0,ev:[]}},
-     {id:3,rival:"Final",hora:"13:30",cancha:"CP",plantel:[],res:{us:0,them:0,ev:[]}}
-    ]}
-  ],
-  md:{pre:{},form:"3-3",slots:{},min:0,ev:[],us:0,them:0,res:""},
-  stats:{pj:8,v:5,e:1,d:2,att:82}},
- {id:2,name:"Los Pumas B",cat:"Sub-12",anio:"2014",tmp:"2026",color:"#0e7490",fmt:"7v7",dur:25,
-  staff:[{sid:1,rol:"principal"}],
-  j:[{id:1,n:"Matías Herrera",p:"Portero",i:"MH",num:1},{id:2,n:"Lucas Vera",p:"Defensa",i:"LV",num:2},
-     {id:3,n:"Agustín Ríos",p:"Defensa",i:"AR",num:3},{id:4,n:"Franco Medina",p:"Mediocampo",i:"FM",num:4},
-     {id:5,n:"Sebastián Gil",p:"Mediocampo",i:"SG",num:5},{id:6,n:"Tomás Blanco",p:"Delantero",i:"TB",num:7},
-     {id:7,n:"Ramiro Castro",p:"Delantero",i:"RC",num:9}],
-  cv:[{id:1,tipo:"entrenamiento",rival:"Entrenamiento semanal",fecha:"2026-03-23",hora:"17:00",lugar:"Cancha B",lim:"2026-03-22",can:false,
-       jug:[1,2,3,4,5,6,7],resp:{1:"si",2:"pendiente",3:"si",4:"pendiente",5:"si",6:"no",7:"si"},man:{},late:{},fotos:[],chat:[]}],
-  md:{pre:{},form:"3-3",slots:{},min:0,ev:[],us:0,them:0,res:""},
-  stats:{pj:7,v:3,e:2,d:2,att:78}},
- {id:3,name:"Los Pumas",cat:"Sub-10",anio:"2016",tmp:"2026",color:"#1a56a0",fmt:"6v6",dur:20,
-  staff:[{sid:2,rol:"principal"}],
-  j:[{id:1,n:"Rodrigo Silva",p:"Portero",i:"RS",num:1},{id:2,n:"Bruno García",p:"Defensa",i:"BG",num:2},
-     {id:3,n:"Luca Fernández",p:"Defensa",i:"LF",num:3},{id:4,n:"Dante Ríos",p:"Mediocampo",i:"DR",num:4},
-     {id:5,n:"Máximo Herrera",p:"Mediocampo",i:"MH",num:5},{id:6,n:"Tomás Acosta",p:"Delantero",i:"TA",num:7},
-     {id:7,n:"Nico Pérez",p:"Delantero",i:"NP",num:9}],
-  cv:[{id:1,tipo:"partido",rival:"vs. Náutico Tigre",fecha:"2026-03-22",hora:"11:30",lugar:"Cancha B",lim:"2026-03-21",can:false,esp:{entrada:"gratis",entradaMonto:"",estac:"no",estacMonto:""},
-       jug:[1,2,3,4,5,6,7],resp:{1:"si",2:"si",3:"pendiente",4:"si",5:"si",6:"si",7:"si"},man:{},late:{},fotos:[],chat:[]}],
-  md:{pre:{},form:"2-3",slots:{},min:0,ev:[],us:0,them:0,res:""},
-  stats:{pj:6,v:3,e:2,d:1,att:88}}
-];
-var CHILDREN=[
- {id:1,n:"Facundo Díaz",tid:1,jid:4,ini:"FD",
-  parents:[{aid:1,name:"Martín Díaz",rel:"Papá"},{aid:2,name:"Laura Díaz",rel:"Mamá"}]},
- {id:2,n:"Rodrigo Silva",tid:3,jid:1,ini:"RS",
-  parents:[{aid:1,name:"Martín Díaz",rel:"Papá"},{aid:3,name:"Ana Silva",rel:"Mamá"}]}
-];
-var ACCOUNTS=[
- {id:1,name:"Martín Díaz",rel:"Papá",kids:[1,2]},
- {id:2,name:"Laura Díaz",rel:"Mamá",kids:[1]},
- {id:3,name:"Ana Silva",rel:"Mamá",kids:[2]}
-];
-var RESULTS={
- 1:[{r:"vs. Deportivo Sur",gf:2,gc:1,f:"22 Mar"},{r:"vs. Racing Juvenil",gf:1,gc:1,f:"15 Mar"},{r:"vs. Atlético Norte",gf:0,gc:2,f:"8 Mar"},{r:"vs. San Martín",gf:3,gc:0,f:"1 Mar"},{r:"vs. Náutico Tigre",gf:2,gc:2,f:"22 Feb"}],
- 3:[{r:"vs. Náutico Tigre",gf:1,gc:0,f:"22 Mar"},{r:"vs. San Fernando",gf:2,gc:2,f:"15 Mar"},{r:"vs. Atlético Inf.",gf:1,gc:1,f:"8 Mar"}]
-};
-var SCORERS={
- 1:[{jid:11,g:6},{jid:8,g:4},{jid:6,g:3},{jid:13,g:3},{jid:10,g:2},{jid:2,g:1}],
- 3:[{jid:6,g:5},{jid:7,g:3},{jid:4,g:2}]
-};
-var LIGA={
- 1:[{n:"River Inf.",pj:8,v:6,e:1,d:1,gf:18,gc:7},{n:"Los Pumas A",pj:8,v:5,e:1,d:2,gf:11,gc:8,mine:true},{n:"Racing Juv.",pj:8,v:4,e:2,d:2,gf:14,gc:10},{n:"San Martín",pj:8,v:4,e:1,d:3,gf:11,gc:11},{n:"Dep. Sur",pj:8,v:3,e:1,d:4,gf:9,gc:12},{n:"Atlético N.",pj:8,v:2,e:2,d:4,gf:8,gc:13}],
- 3:[{n:"Los Pumas",pj:6,v:4,e:1,d:1,gf:9,gc:3,mine:true},{n:"Racing S10",pj:6,v:3,e:2,d:1,gf:10,gc:5},{n:"San Fernando",pj:6,v:3,e:1,d:2,gf:8,gc:6},{n:"Náutico T.",pj:6,v:2,e:1,d:3,gf:7,gc:8}]
-};
-var CATTEND={
-1:[{tipo:"partido",ev:"vs. Racing",f:"15 Mar",ok:true,min:50,g:1,tmp:"2026"},{tipo:"partido",ev:"vs. Atletico Norte",f:"8 Mar",ok:false,min:0,g:0,tmp:"2026"}],
-2:[{tipo:"partido",ev:"vs. Nautico Tigre",f:"22 Mar",ok:true,min:40,g:1,tmp:"2026"}]
-};
-var HIST={
- 1:[
-  {id:"h1",rival:"vs. Racing Juvenil",fecha:"2026-03-15",tipo:"partido",res:{us:1,gc:1},
-   ev:[{tipo:"gol",jid:8,desc:"Agustín Molina",min:33},{tipo:"gol",desc:"Gol del rival",min:71}],nota:"Empatamos en el último minuto. Buena reacción.",fotos:[]},
-  {id:"h2",rival:"vs. San Martín FC",fecha:"2026-03-01",tipo:"partido",res:{us:3,gc:0},
-   ev:[{tipo:"gol",jid:11,desc:"Ezequiel Flores",min:8},{tipo:"gol",jid:6,desc:"Ignacio Pérez",min:23},{tipo:"gol",jid:11,desc:"Ezequiel Flores",min:67}],nota:"Excelente partido. Presión alta efectiva.",fotos:[]},
-  {id:"h3",rival:"vs. Atlético Norte",fecha:"2026-02-22",tipo:"partido",res:{us:0,gc:2},
-   ev:[{tipo:"gol",desc:"Gol del rival",min:31},{tipo:"roja",jid:9,desc:"Benjamín Vargas",min:44},{tipo:"gol",desc:"Gol del rival",min:62}],nota:"La roja nos complicó. Con 10 hicimos un gran esfuerzo.",fotos:[]}
- ],
- 3:[
-  {id:"h4",rival:"vs. Racing Sub-10",fecha:"2026-03-01",tipo:"partido",res:{us:3,gc:1},
-   ev:[{tipo:"gol",jid:6,desc:"Tomás Acosta",min:10},{tipo:"gol",jid:6,desc:"Tomás Acosta",min:25},{tipo:"gol",jid:7,desc:"Nico Pérez",min:48}],nota:"Gran partido de Tomás.",fotos:[]}
- ]
-};
-var ALERTS=[
- {id:1,tipo:"rsvp",msg:"Facundo Díaz confirmó SÍ después del límite",f:"Hoy 9:42",read:false},
- {id:2,tipo:"att",msg:"Benjamín Vargas: 45% de asistencia",f:"Lunes",read:true}
-];
-var VENUES=[
- {id:1,name:"Cancha A",tipo:"Fútbol 7",piso:"Pasto sint.",color:"#1a7a3c",
-  week:{Lun:[{t:"10:00",tid:1}],Mar:[{t:"17:00",tid:1}],Mié:[{t:"17:00",tid:2}],Jue:[],Vie:[{t:"09:00",tid:1}],Sáb:[{t:"10:00",tid:1},{t:"11:30",tid:3}],Dom:[{t:"10:00",tid:3}]}},
- {id:2,name:"Cancha B",tipo:"Fútbol 5",piso:"Cemento",color:"#1a56a0",
-  week:{Lun:[{t:"09:00",tid:2}],Mar:[{t:"17:00",tid:2}],Mié:[],Jue:[{t:"09:00",tid:3}],Vie:[{t:"17:00",tid:3}],Sáb:[{t:"09:00",tid:2},{t:"17:00",tid:1}],Dom:[{t:"11:00",tid:2}]}}
-];
+var TODAY="2026-11-13";
+var CLUB={name:"Centro Asturiano de Buenos Aires",seasonEndMonth:12,inactivityDays:45};
+var SP=[{id:1,n:"Gustavo Ferrari",ini:"GF"},{id:2,n:"Pablo Rinaldi",ini:"PR"}];
+var TEAMS=[{"id":1,"name":"Astu Blanco","ini":"BL","cat":"Promocionales","anio":"2018/2019","tmp":"2026","color":"#1d4ed8","fmt":"8v8","dur":20,"staff":[{"sid":1,"rol":"principal"}],"j":[{"id":1,"n":"Lautaro Gómez","p":"Portero","i":"LG","num":1},{"id":2,"n":"Santino Ferreyra","p":"Defensa","i":"SF","num":2},{"id":3,"n":"Valentino Sosa","p":"Defensa","i":"VS","num":3},{"id":4,"n":"Bautista Romero","p":"Defensa","i":"BR","num":4},{"id":5,"n":"Thiago Medina","p":"Mediocampo","i":"TM","num":5},{"id":6,"n":"Benjamín Herrera","p":"Mediocampo","i":"BH","num":6},{"id":7,"n":"Mateo Paz","p":"Mediocampo","i":"MP","num":7},{"id":8,"n":"Lorenzo Vidal","p":"Mediocampo","i":"LV","num":8},{"id":9,"n":"Francisco Ibarra","p":"Delantero","i":"FI","num":9},{"id":10,"n":"Simón Aguirre","p":"Delantero","i":"SA","num":10},{"id":11,"n":"Facundo Luna","p":"Delantero","i":"FL","num":11},{"id":12,"n":"Agustín Navarro","p":"Defensa","i":"AN","num":12}],"cv":[{"id":101,"tipo":"partido","rival":"vs. Atlético Los Robles","fecha":"2026-10-25","hora":"10:00","lugar":"Cancha 1","lim":"2026-10-24","can":false,"esp":{"entrada":"gratis","entradaMonto":"","estac":"no","estacMonto":""},"jug":[1,2,3,4,5,6,7,8,9,10,11],"resp":{"1":"si","2":"si","3":"no","4":"si","5":"si","6":"si","7":"si","8":"si","9":"si","10":"si","11":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":102,"tipo":"entrenamiento","rival":"Entrenamiento","fecha":"2026-10-27","hora":"18:00","lugar":"Cancha 2","lim":"","can":false,"jug":[1,2,3,4,5,6,7,8,9,10,11,12],"resp":{"1":"si","2":"si","3":"si","4":"no","5":"si","6":"si","7":"si","8":"si","9":"no","10":"si","11":"si","12":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":103,"tipo":"entrenamiento","rival":"Entrenamiento","fecha":"2026-10-29","hora":"18:00","lugar":"Cancha 2","lim":"","can":false,"jug":[1,2,3,4,5,6,7,8,9,10,11,12],"resp":{"1":"si","2":"si","3":"si","4":"si","5":"si","6":"si","7":"no","8":"si","9":"si","10":"si","11":"si","12":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":104,"tipo":"partido","rival":"vs. Unión del Parque","fecha":"2026-11-01","hora":"10:00","lugar":"Cancha 1","lim":"2026-10-31","can":false,"esp":{"entrada":"gratis","entradaMonto":"","estac":"no","estacMonto":""},"jug":[1,2,3,4,5,6,7,8,9,10,11],"resp":{"1":"si","2":"si","3":"si","4":"si","5":"si","6":"no","7":"si","8":"si","9":"si","10":"si","11":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":105,"tipo":"entrenamiento","rival":"Entrenamiento","fecha":"2026-11-03","hora":"18:00","lugar":"Cancha 2","lim":"","can":false,"jug":[1,2,3,4,5,6,7,8,9,10,11,12],"resp":{"1":"no","2":"si","3":"si","4":"si","5":"si","6":"si","7":"si","8":"si","9":"si","10":"si","11":"si","12":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":106,"tipo":"entrenamiento","rival":"Entrenamiento","fecha":"2026-11-05","hora":"18:00","lugar":"Cancha 2","lim":"","can":false,"jug":[1,2,3,4,5,6,7,8,9,10,11,12],"resp":{"1":"si","2":"si","3":"si","4":"si","5":"no","6":"si","7":"si","8":"si","9":"si","10":"no","11":"si","12":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":107,"tipo":"partido","rival":"vs. Social Arroyo","fecha":"2026-11-08","hora":"10:00","lugar":"Cancha 1","lim":"2026-11-07","can":false,"esp":{"entrada":"gratis","entradaMonto":"","estac":"no","estacMonto":""},"jug":[1,2,3,4,5,6,7,8,9,10,11],"resp":{"1":"si","2":"no","3":"si","4":"si","5":"si","6":"si","7":"si","8":"si","9":"si","10":"si","11":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":108,"tipo":"entrenamiento","rival":"Entrenamiento","fecha":"2026-11-10","hora":"18:00","lugar":"Cancha 2","lim":"","can":false,"jug":[1,2,3,4,5,6,7,8,9,10,11,12],"resp":{"1":"si","2":"si","3":"no","4":"si","5":"si","6":"si","7":"si","8":"si","9":"si","10":"si","11":"si","12":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":109,"tipo":"entrenamiento","rival":"Entrenamiento","fecha":"2026-11-12","hora":"18:00","lugar":"Cancha 2","lim":"","can":false,"jug":[1,2,3,4,5,6,7,8,9,10,11,12],"resp":{"1":"si","2":"si","3":"si","4":"si","5":"si","6":"si","7":"si","8":"no","9":"si","10":"si","11":"si","12":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":1,"tipo":"partido","rival":"vs. Deportivo La Loma","fecha":"2026-11-15","hora":"10:00","lugar":"Cancha 1","lim":"2026-11-14","can":false,"esp":{"entrada":"gratis","entradaMonto":"","estac":"no","estacMonto":""},"jug":[1,2,3,4,5,6,7,8,9,10,11],"resp":{"1":"si","2":"si","3":"si","4":"no","5":"si","6":"si","7":"pendiente","8":"si","9":"si","10":"pendiente","11":"pendiente"},"man":{},"late":{},"fotos":[],"chat":[{"id":1,"autor":"Gustavo Ferrari","rol":"dt","txt":"Citados 09:45 en Cancha 1. Por favor respeten el horario.","t":"Jue 20:10"},{"id":2,"autor":"Diego Paz","rol":"padre","txt":"Mateo tiene un cumple el sábado, mañana confirmo.","t":"Jue 21:02"}]}],"md":{"pre":{},"form":"3-3-1","slots":{},"min":0,"ev":[],"us":0,"them":0,"res":""},"stats":{"pj":13,"v":7,"e":3,"d":3,"att":86}},
+{"id":2,"name":"Astu Azul","ini":"AZ","cat":"Promocionales","anio":"2018/2019","tmp":"2026","color":"#0e7490","fmt":"8v8","dur":20,"staff":[{"sid":2,"rol":"principal"}],"j":[{"id":1,"n":"Tobías Ledesma","p":"Portero","i":"TL","num":1},{"id":2,"n":"Ignacio Sánchez","p":"Defensa","i":"IS","num":2},{"id":3,"n":"Emilio Castro","p":"Defensa","i":"EC","num":3},{"id":4,"n":"Martín Funes","p":"Defensa","i":"MF","num":4},{"id":5,"n":"Gael Ortiz","p":"Mediocampo","i":"GO","num":5},{"id":6,"n":"Bastián Ríos","p":"Mediocampo","i":"BR","num":6},{"id":7,"n":"Julián Vega","p":"Mediocampo","i":"JV","num":7},{"id":8,"n":"León Domínguez","p":"Mediocampo","i":"LD","num":8},{"id":9,"n":"Lucas Peralta","p":"Delantero","i":"LP","num":9},{"id":10,"n":"Federico Godoy","p":"Delantero","i":"FG","num":10},{"id":11,"n":"Camilo Benítez","p":"Delantero","i":"CB","num":11},{"id":12,"n":"Máximo Quiroga","p":"Defensa","i":"MQ","num":12},{"id":13,"n":"Ciro Moreno","p":"Mediocampo","i":"CM","num":13}],"cv":[{"id":101,"tipo":"partido","rival":"vs. Juventud del Bajo","fecha":"2026-10-25","hora":"11:00","lugar":"Cancha 1","lim":"2026-10-24","can":false,"esp":{"entrada":"gratis","entradaMonto":"","estac":"no","estacMonto":""},"jug":[1,2,3,4,5,6,7,8,9,10,11],"resp":{"1":"si","2":"si","3":"no","4":"si","5":"si","6":"si","7":"si","8":"si","9":"si","10":"si","11":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":102,"tipo":"entrenamiento","rival":"Entrenamiento","fecha":"2026-10-27","hora":"18:00","lugar":"Cancha 2","lim":"","can":false,"jug":[1,2,3,4,5,6,7,8,9,10,11,12,13],"resp":{"1":"si","2":"si","3":"si","4":"no","5":"si","6":"si","7":"si","8":"si","9":"no","10":"si","11":"si","12":"si","13":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":103,"tipo":"entrenamiento","rival":"Entrenamiento","fecha":"2026-10-29","hora":"18:00","lugar":"Cancha 2","lim":"","can":false,"jug":[1,2,3,4,5,6,7,8,9,10,11,12,13],"resp":{"1":"si","2":"si","3":"si","4":"si","5":"si","6":"si","7":"no","8":"si","9":"si","10":"si","11":"si","12":"si","13":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":104,"tipo":"partido","rival":"vs. Estrella del Sur","fecha":"2026-11-01","hora":"11:00","lugar":"Cancha 1","lim":"2026-10-31","can":false,"esp":{"entrada":"gratis","entradaMonto":"","estac":"no","estacMonto":""},"jug":[1,2,3,4,5,6,7,8,9,10,11],"resp":{"1":"si","2":"si","3":"si","4":"si","5":"si","6":"no","7":"si","8":"si","9":"si","10":"si","11":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":105,"tipo":"entrenamiento","rival":"Entrenamiento","fecha":"2026-11-03","hora":"18:00","lugar":"Cancha 2","lim":"","can":false,"jug":[1,2,3,4,5,6,7,8,9,10,11,12,13],"resp":{"1":"no","2":"si","3":"si","4":"si","5":"si","6":"si","7":"si","8":"si","9":"si","10":"si","11":"si","12":"si","13":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":106,"tipo":"entrenamiento","rival":"Entrenamiento","fecha":"2026-11-05","hora":"18:00","lugar":"Cancha 2","lim":"","can":false,"jug":[1,2,3,4,5,6,7,8,9,10,11,12,13],"resp":{"1":"si","2":"si","3":"si","4":"si","5":"no","6":"si","7":"si","8":"si","9":"si","10":"no","11":"si","12":"si","13":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":107,"tipo":"partido","rival":"vs. Club Las Acacias","fecha":"2026-11-08","hora":"11:00","lugar":"Cancha 1","lim":"2026-11-07","can":false,"esp":{"entrada":"gratis","entradaMonto":"","estac":"no","estacMonto":""},"jug":[1,2,3,4,5,6,7,8,9,10,11],"resp":{"1":"si","2":"no","3":"si","4":"si","5":"si","6":"si","7":"si","8":"si","9":"si","10":"si","11":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":108,"tipo":"entrenamiento","rival":"Entrenamiento","fecha":"2026-11-10","hora":"18:00","lugar":"Cancha 2","lim":"","can":false,"jug":[1,2,3,4,5,6,7,8,9,10,11,12,13],"resp":{"1":"si","2":"si","3":"no","4":"si","5":"si","6":"si","7":"si","8":"si","9":"si","10":"si","11":"si","12":"si","13":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":109,"tipo":"entrenamiento","rival":"Entrenamiento","fecha":"2026-11-12","hora":"18:00","lugar":"Cancha 2","lim":"","can":false,"jug":[1,2,3,4,5,6,7,8,9,10,11,12,13],"resp":{"1":"si","2":"si","3":"si","4":"si","5":"si","6":"si","7":"si","8":"no","9":"si","10":"si","11":"si","12":"si","13":"si"},"man":{},"late":{},"fotos":[],"chat":[]},{"id":1,"tipo":"partido","rival":"vs. Sportivo Ribera","fecha":"2026-11-15","hora":"11:00","lugar":"Cancha 1","lim":"2026-11-14","can":false,"esp":{"entrada":"gratis","entradaMonto":"","estac":"no","estacMonto":""},"jug":[1,2,3,4,5,6,7,8,9,10,11],"resp":{"1":"si","2":"si","3":"si","4":"si","5":"si","6":"si","7":"si","8":"si","9":"pendiente","10":"si","11":"si"},"man":{},"late":{},"fotos":[],"chat":[{"id":1,"autor":"Pablo Rinaldi","rol":"dt","txt":"Citados 10:45 en Cancha 1. Traigan agua.","t":"Jue 19:40"}]}],"md":{"pre":{},"form":"3-3-1","slots":{},"min":0,"ev":[],"us":0,"them":0,"res":""},"stats":{"pj":13,"v":6,"e":4,"d":3,"att":88}}];
+var CHILDREN=[{"id":1,"n":"Mateo Paz","tid":1,"jid":7,"ini":"MP","parents":[{"aid":1,"name":"Florencia Paz","rel":"Mamá"},{"aid":2,"name":"Diego Paz","rel":"Papá"}]},{"id":2,"n":"Gael Ortiz","tid":2,"jid":5,"ini":"GO","parents":[{"aid":3,"name":"Carolina Ortiz","rel":"Mamá"}]}];
+var ACCOUNTS=[{"id":1,"name":"Florencia Paz","rel":"Mamá","kids":[1]},{"id":2,"name":"Diego Paz","rel":"Papá","kids":[1]},{"id":3,"name":"Carolina Ortiz","rel":"Mamá","kids":[2]}];
+var RESULTS={"1":[{"r":"vs. Social Arroyo","gf":3,"gc":2,"f":"8 Nov"},{"r":"vs. Unión del Parque","gf":1,"gc":1,"f":"1 Nov"},{"r":"vs. Atlético Los Robles","gf":2,"gc":1,"f":"25 Oct"}],"2":[{"r":"vs. Club Las Acacias","gf":4,"gc":1,"f":"8 Nov"},{"r":"vs. Estrella del Sur","gf":2,"gc":2,"f":"1 Nov"},{"r":"vs. Juventud del Bajo","gf":0,"gc":1,"f":"25 Oct"}]};
+var SCORERS={};
+var LIGA={};
+var CATTEND={};
+var HIST={"1":[{"id":"h10","rival":"vs. Social Arroyo","fecha":"2026-11-08","tipo":"partido","res":{"us":3,"gc":2},"ev":[],"nota":"","fotos":[]},{"id":"h11","rival":"vs. Unión del Parque","fecha":"2026-11-01","tipo":"partido","res":{"us":1,"gc":1},"ev":[],"nota":"","fotos":[]},{"id":"h12","rival":"vs. Atlético Los Robles","fecha":"2026-10-25","tipo":"partido","res":{"us":2,"gc":1},"ev":[],"nota":"","fotos":[]}],"2":[{"id":"h20","rival":"vs. Club Las Acacias","fecha":"2026-11-08","tipo":"partido","res":{"us":4,"gc":1},"ev":[],"nota":"","fotos":[]},{"id":"h21","rival":"vs. Estrella del Sur","fecha":"2026-11-01","tipo":"partido","res":{"us":2,"gc":2},"ev":[],"nota":"","fotos":[]},{"id":"h22","rival":"vs. Juventud del Bajo","fecha":"2026-10-25","tipo":"partido","res":{"us":0,"gc":1},"ev":[],"nota":"","fotos":[]}]};
+var ALERTS=[{"id":1,"tipo":"rsvp","msg":"Astu Blanco: 7 confirmados para el domingo (mínimo 9)","f":"Hoy 9:10","read":false}];
+var VENUES=[{"id":1,"name":"Cancha 1","tipo":"Fútbol 8","piso":"Pasto sint.","color":"#1d4ed8","week":{"Lun":[],"Mar":[],"Mié":[],"Jue":[],"Vie":[],"Sáb":[],"Dom":[{"t":"10:00","tid":1},{"t":"11:00","tid":2}]}},{"id":2,"name":"Cancha 2","tipo":"Fútbol 8","piso":"Pasto sint.","color":"#0e7490","week":{"Lun":[],"Mar":[{"t":"18:00","tid":1},{"t":"18:00","tid":2}],"Mié":[],"Jue":[{"t":"18:00","tid":1},{"t":"18:00","tid":2}],"Vie":[],"Sáb":[],"Dom":[]}}];
 var FF={
  "5v5":{"2-2":[[1],[2],[2]],"1-2-1":[[1],[1],[2],[1]]},
  "6v6":{"2-3":[[1],[2],[3]],"3-2":[[1],[3],[2]]},
  "7v7":{"3-3":[[1],[3],[3]],"2-3-1":[[1],[2],[3],[1]]},
+ "8v8":{"3-3-1":[[1],[3],[3],[1]],"2-3-2":[[1],[2],[3],[2]],"3-2-2":[[1],[3],[2],[2]]},
  "11v11":{"4-3-3":[[1],[4],[3],[3]],"4-4-2":[[1],[4],[4],[2]]}
 };
 
@@ -947,18 +821,7 @@ var _dtStatSub="ren";
 var _pTabCid={};      
 var _pEqSub={};       
 var _pMDTab="live";
-var TORNEOS=[{id:1,name:"Copa San Isidro Sub-12",org:"Liga Norte",fecha:"2026-04-15",loc:"Complejo Nautico",cats:["Pre-infantiles","Infantiles"],inscr:{1:true},lim:8,estado:"abierto",desc:"Torneo anual.",
-  equipos:["Los Pumas A","Deportivo Sur","Atlético Norte","Racing Junior","San Fernando","Club Tigre"],
-  partidos:[
-    {local:"Los Pumas A",visit:"Deportivo Sur",gl:3,gv:1,fecha:"2026-03-01"},
-    {local:"Atlético Norte",visit:"Racing Junior",gl:1,gv:1,fecha:"2026-03-01"},
-    {local:"San Fernando",visit:"Club Tigre",gl:2,gv:0,fecha:"2026-03-01"},
-    {local:"Los Pumas A",visit:"Atlético Norte",gl:2,gv:2,fecha:"2026-03-08"},
-    {local:"Deportivo Sur",visit:"San Fernando",gl:0,gv:1,fecha:"2026-03-08"},
-    {local:"Racing Junior",visit:"Club Tigre",gl:3,gv:2,fecha:"2026-03-08"},
-    {local:"Los Pumas A",visit:"San Fernando",gl:4,gv:0,fecha:"2026-03-15"}
-  ]
-}];
+var TORNEOS=[];
 var DISP={};var NOTAS={};var CODES={};var SID=1;
 var _cgSec="cat",_cgCat="",_cgTid=null;
 var _clubFilter="todos";
@@ -969,6 +832,8 @@ function gT(id){for(var i=0;i<TEAMS.length;i++)if(TEAMS[i].id===(id||TID))return
 function T(){return gT(TID)}
 function gSt(id){for(var i=0;i<SP.length;i++)if(SP[i].id===id)return SP[i];return null}
 function fJ(tmid,jid){var t=gT(tmid);for(var i=0;i<t.j.length;i++)if(t.j[i].id===jid)return t.j[i];return null}
+// Iniciales del equipo para avatares: t.ini si existe, si no la ultima palabra del nombre (max 3 letras)
+function tIni(t){return t.ini||t.name.split(" ").pop().slice(0,3)}
 function fCV(tmid,cvid){var t=gT(tmid);for(var i=0;i<t.cv.length;i++)if(t.cv[i].id===cvid)return t.cv[i];return null}
 // Convocatoria activa: la de hoy o la proxima por fecha/hora (no cancelada). Con jid, solo las que incluyen a ese jugador.
 function actCV(tmid,jid){var t=gT(tmid||TID),best=null;for(var i=0;i<t.cv.length;i++){var c=t.cv[i];if(c.can||c.fecha<TODAY)continue;if(jid!==undefined&&c.jug.indexOf(jid)===-1)continue;if(!best||c.fecha<best.fecha||(c.fecha===best.fecha&&(c.hora||"")<(best.hora||"")))best=c}return best}
@@ -1132,7 +997,7 @@ function recordRsvp(cv,jid,resp,acct){
 var SQ_LOGO='<svg viewBox="0 0 40 40" width="28" height="28"><polygon points="20,2 38,14 31,35 9,35 2,14" fill="none" stroke="#F26419" stroke-width="2.5" stroke-linejoin="round"/><polygon points="20,5 35,15.5 29,33 11,33 5,15.5" fill="none" stroke="#F26419" stroke-width="0.5" opacity=".3"/><text x="20" y="27" text-anchor="middle" font-family="var(--f-serif)" font-size="20" font-weight="400" fill="url(#sqg)">S</text><defs><linearGradient id="sqg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF7A35"/><stop offset="100%" stop-color="#C84E08"/></linearGradient></defs></svg>';
 var NAV_CFG={
   coord:{tabs:[{ic:"🏠",lb:"Club"},{ic:"🗂",lb:"Gestión"},{ic:"📅",lb:"Calendario"},{ic:"📊",lb:"Estadísticas"}],hdrIco:"__SVG__",hdrName:function(){return CLUB.name},hdrSub:function(){return"Coordinador · "+TEAMS.length+" equipos"},color:"#0C0D0F"},
-  dt:{tabs:[{ic:"🏠",lb:"Equipo"},{ic:"📅",lb:"Convocatorias"},{ic:"⚽",lb:"Match Day"},{ic:"📊",lb:"Estadísticas"}],hdrIco:function(){return T().name.split(" ").pop()},hdrName:function(){return T().name},hdrSub:function(){return T().cat+" "+T().anio+" · "+T().tmp},color:function(){return T().color}},
+  dt:{tabs:[{ic:"🏠",lb:"Equipo"},{ic:"📅",lb:"Convocatorias"},{ic:"⚽",lb:"Match Day"},{ic:"📊",lb:"Estadísticas"}],hdrIco:function(){return tIni(T())},hdrName:function(){return T().name},hdrSub:function(){return T().cat+" "+T().anio+" · "+T().tmp},color:function(){return T().color}},
   padre:{tabs:[{ic:"🏠",lb:"Mis hijos"},{ic:"📅",lb:"Convocatoria"},{ic:"⚽",lb:"En vivo"},{ic:"👤",lb:"Perfil"}],hdrIco:"👨‍👧‍👦",hdrName:function(){return"Mis hijos"},hdrSub:function(){return gAcct(ACCT_ID).name+" · "+gAcct(ACCT_ID).rel},color:"#0C0D0F"}
 };
 
@@ -1281,6 +1146,7 @@ function setCF(f){_clubFilter=f;render()}
 function fmtMin(fmt){
   
   if(fmt==="11v11")return 11;
+  if(fmt==="8v8")return 8;
   if(fmt==="7v7")return 7;
   if(fmt==="6v6")return 6;
   if(fmt==="5v5")return 5;
@@ -1339,7 +1205,7 @@ function rCoordClub(){
     var stIc=st==="listo"?"✅":st==="corto"?"⚠️":"—";
     var stTxt=st==="listo"?"Listo":st==="corto"?"Incompleto":"Sin convocatoria";
     h+='<div class="team-row" onclick="jumpDT('+t.id+')">'
-      +'<div class="team-dot" style="background:'+t.color+'">'+t.name.charAt(0)+'</div>'
+      +'<div class="team-dot" style="background:'+t.color+'">'+tIni(t)+'</div>'
       +'<div style="flex:1"><div style="font-size:13px;font-weight:600">'+t.name+'</div>'
       +'<div style="font-size:10px;color:var(--ink3)">'+t.cat+' '+t.anio+'</div></div>'
       +'<div style="font-size:11px;color:var(--ink3)">'+stIc+' '+stTxt+'</div>'
@@ -1385,7 +1251,7 @@ function openNewTeam(){
   showOverlay(mHdr('Nuevo equipo')+'<div class="modal-body">'
     +'<div class="inp-lbl">Nombre del equipo</div><input id="nt-name" class="inp" placeholder="Los Pumas C">'
     +'<div class="inp-lbl">Formato</div>'
-    +'<select id="nt-fmt" class="inp"><option>7v7</option><option>11v11</option><option>6v6</option><option>5v5</option></select>'
+    +'<select id="nt-fmt" class="inp"><option>8v8</option><option>7v7</option><option>11v11</option><option>6v6</option><option>5v5</option></select>'
     +'<div class="inp-lbl">Duración de cada tiempo (min)</div><input id="nt-dur" class="inp" placeholder="25" type="number" min="10" max="45">'
     +'<button class="btn btn-p" onclick="saveNewTeam()">Crear equipo</button>'
     +'</div>')
@@ -1688,7 +1554,7 @@ function openCoordWz(){
   var h='<div class="card">';
   TEAMS.forEach(function(t){
     h+='<div class="card-row" style="cursor:pointer" onclick="TID='+t.id+';closeOverlay();openWz(null,null)">'
-      +'<div class="team-dot" style="background:'+t.color+'">'+t.name.split(' ').pop()+'</div>'
+      +'<div class="team-dot" style="background:'+t.color+'">'+tIni(t)+'</div>'
       +'<div style="flex:1;margin-left:8px"><div style="font-size:13px;font-weight:600">'+t.name+'</div><div style="font-size:11px;color:var(--ink3)">'+t.cat+' '+t.anio+'</div></div>'
       +'<span style="font-size:14px;color:var(--ink4)">›</span></div>'
   });
@@ -1735,7 +1601,7 @@ function rDTHome(){
       var stTxt=st==="listo"?"Listo":st==="corto"?"Incompleto":"Sin convocatoria";
       h+='<div class="card" style="margin-bottom:10px;cursor:pointer" onclick="TID='+t.id+';window._dtTeamSelected=true;applyTheme();render()">'
         +'<div class="card-row">'
-        +'<div class="team-dot" style="background:'+t.color+'">'+t.name.split(" ").pop()+'</div>'
+        +'<div class="team-dot" style="background:'+t.color+'">'+tIni(t)+'</div>'
         +'<div style="flex:1;margin-left:4px">'
           +'<div style="font-size:15px;font-weight:700">'+t.name+'</div>'
           +'<div style="font-size:11px;color:var(--ink3);margin-top:2px">'+t.cat+' '+t.anio+' · '+t.j.length+' jugadores</div>'
@@ -1768,7 +1634,7 @@ function rDTHome(){
 
   // Team header
   h+='<div style="text-align:center;padding:4px 0 16px">'
-    +'<div class="prof-av" style="background:'+t.color+'">'+t.name.split(' ').pop()+'</div>'
+    +'<div class="prof-av" style="background:'+t.color+'">'+tIni(t)+'</div>'
     +'<div style="font-size:17px;font-weight:700">'+t.name+'</div>'
     +'<div style="font-size:12px;color:var(--ink3);margin-top:3px">'+t.cat+' '+t.anio+' · '+t.tmp+'</div>'
     +'<div style="margin-top:10px">'
@@ -2222,7 +2088,7 @@ function rDTProfEquipo(){
   var t=T();
   var h='<div class="prof-section">'
     +'<div style="text-align:center;padding:8px 0 20px">'
-    +'<div class="prof-av" style="background:'+t.color+'">'+t.name.split(' ').pop()+'</div>'
+    +'<div class="prof-av" style="background:'+t.color+'">'+tIni(t)+'</div>'
     +'<div style="font-size:17px;font-weight:700">'+t.name+'</div>'
     +'<div style="font-size:12px;color:var(--ink3);margin-top:3px">'+t.cat+' '+t.anio+' · '+t.tmp+'</div>'
     +'<div style="margin-top:10px">'
@@ -2301,7 +2167,7 @@ function openTeamSw(){
     rows+='<div style="padding:6px 13px 2px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3)">'+k+'</div>';
     groups[k].forEach(function(t){
       rows+='<div class="card-row" style="cursor:pointer" onclick="TID='+t.id+';closeOverlay();applyTheme();render()">'
-        +'<div class="team-dot" style="background:'+t.color+'">'+t.name.split(" ").pop()+'</div>'
+        +'<div class="team-dot" style="background:'+t.color+'">'+tIni(t)+'</div>'
         +'<div style="flex:1;margin-left:4px"><div style="font-size:13px;font-weight:600">'+t.name+'</div><div style="font-size:11px;color:var(--ink3)">'+t.fmt+'</div></div>'
         +(t.id===TID?'<span style="color:var(--tc);font-size:13px">✓</span>':'')
         +'</div>'
@@ -3014,13 +2880,13 @@ localStorage.setItem(_SAVE_KEYS.role,ROLE);
 localStorage.setItem(_SAVE_KEYS.tid,String(TID));
 localStorage.setItem(_SAVE_KEYS.cid,String(CID));
 localStorage.setItem(_SAVE_KEYS.nav,String(NAV));
-localStorage.setItem("sq_version","22");
+localStorage.setItem("sq_version","23");
 }catch(e){console.warn("saveState failed",e);}}
 
 function loadState(){
 try{
-if(localStorage.getItem("sq_version")!=="22"){
-localStorage.clear();localStorage.setItem("sq_version","22");return false;}
+if(localStorage.getItem("sq_version")!=="23"){
+localStorage.clear();localStorage.setItem("sq_version","23");return false;}
 var t=localStorage.getItem(_SAVE_KEYS.teams);if(t)TEAMS=JSON.parse(t);
 var ch=localStorage.getItem(_SAVE_KEYS.children);if(ch)CHILDREN=JSON.parse(ch);
 var ac=localStorage.getItem(_SAVE_KEYS.accounts);if(ac)ACCOUNTS=JSON.parse(ac);
@@ -3149,7 +3015,7 @@ var hs=HIST[t.id]||[];var v=0,e=0,d=0;
 hs.forEach(function(h){var dif=h.res.us-h.res.gc;if(dif>0)v++;else if(dif===0)e++;else d++;});
 h+='<div style="padding:12px 13px;border-bottom:'+(ti<TEAMS.length-1?"1px solid #f8f8f8":"none")+'">';
 h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">';
-h+='<div style="width:28px;height:28px;border-radius:50%;background:'+t.color+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">'+t.name.split(" ").pop().slice(0,3)+'</div>';
+h+='<div style="width:28px;height:28px;border-radius:50%;background:'+t.color+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">'+tIni(t)+'</div>';
 h+='<div style="font-size:13px;font-weight:700">'+t.name+'</div>';
 h+='<div style="font-size:10px;color:var(--ink3);margin-left:auto">'+t.cat+'</div></div>';
 h+='<div style="display:flex;gap:12px;font-size:12px">';
@@ -3377,7 +3243,7 @@ h+='<button class="btn btn-o" style="margin-bottom:13px" onclick="checkSeasonAle
 h+='<div class="slbl">Mensaje a padres</div>';
 h+='<div class="card card-p" style="margin-bottom:13px">';
 h+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">';
-["Todos los padres","Sub-12","Sub-10"].forEach(function(c){
+["Todos los padres"].concat(TEAMS.map(function(t){return t.cat}).filter(function(c,i,a){return a.indexOf(c)===i})).forEach(function(c){
 h+='<button class="chip chip-off" onclick="this.className=this.className.indexOf(\'chip-on\')>=0?\'chip chip-off\':\'chip chip-on\'">'+c+'</button>';});
 h+='</div>';
 h+='<textarea id="msg-t" class="inp" rows="3" style="resize:none" placeholder="Escribe el mensaje..."></textarea>';
@@ -3464,7 +3330,7 @@ var t=TEAMS.filter(function(tm){return tm.id===_cgTid;})[0]||TEAMS[0];
 var h=cgBread([{lb:"Gestion",fn:"_cgSec='cat';_cgTid=null;render()"},{lb:_cgCat,fn:"_cgTid=null;_cgSec='eq';render()"},{lb:t.name}])+'<div class="sec">';
 h+='<div class="card mb-9" style="padding:12px 13px">';
 h+='<div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">';
-h+='<div style="width:40px;height:40px;border-radius:50%;background:'+t.color+';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff">'+t.name.split(" ").pop().slice(0,3)+'</div>';
+h+='<div style="width:40px;height:40px;border-radius:50%;background:'+t.color+';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff">'+tIni(t)+'</div>';
 h+='<div><div style="font-size:14px;font-weight:700">'+t.name+'</div>';
 h+='<div style="font-size:11px;color:var(--ink3)">'+t.cat+' - Tmp '+(t.tmp||"2026")+'</div></div></div>';
 h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">';
@@ -3505,7 +3371,7 @@ return h+'</div>';}
 var h=cgBread([{lb:"Gestion",fn:"_cgSec='cat';render()"},{lb:_cgCat}])+'<div class="sec"><div class="slbl">Equipos</div>';
 arr.forEach(function(t){
 h+='<div class="card mb-9 card-row" style="cursor:pointer" onclick="_cgTid='+t.id+';render()">';
-h+='<div style="width:34px;height:34px;border-radius:50%;background:'+t.color+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0">'+t.name.split(" ").pop().slice(0,3)+'</div>';
+h+='<div style="width:34px;height:34px;border-radius:50%;background:'+t.color+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0">'+tIni(t)+'</div>';
 h+='<div style="flex:1;margin-left:8px"><div style="font-size:13px;font-weight:700">'+t.name+'</div>';
 h+='<div style="font-size:11px;color:var(--ink3)">'+t.j.length+' jugadores</div></div>';
 h+='<span style="color:var(--ink4);font-size:16px">›</span></div>';});
@@ -3678,7 +3544,7 @@ var rows='<div style="background:#e8f5ec;border-radius:var(--radius-sm);padding:
 rows+='<div class="inp-lbl">Elegir equipo</div><div class="card">';
 teams.forEach(function(t){
 rows+='<div class="card-row" style="cursor:pointer" onclick="joinTeam('+t.id+')">';
-rows+='<div style="width:32px;height:32px;border-radius:50%;background:'+t.color+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">'+t.name.split(" ").pop().slice(0,3)+'</div>';
+rows+='<div style="width:32px;height:32px;border-radius:50%;background:'+t.color+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">'+tIni(t)+'</div>';
 rows+='<div style="flex:1;margin-left:8px"><div style="font-size:13px;font-weight:600">'+t.name+'</div>';
 rows+='<div style="font-size:11px;color:var(--ink3)">'+t.cat+'</div></div>';
 rows+='<span style="color:var(--tc);font-weight:700">Unirme</span></div>';});
