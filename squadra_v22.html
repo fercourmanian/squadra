@@ -1922,9 +1922,37 @@ function openShare(cvid,tid){
       +'<button class="btn-sm" id="'+bid+'" onclick="cpW(\'_im_'+bid+'\',\''+bid+'\')">Copiar</button>'
       +'</div>'
   });
-  showOverlay(mHdr("📲 Invitaciones")+rows+'</div><div class="modal-body" style="padding-top:10px"><button class="btn btn-o" onclick="closeOverlay()">Cerrar</button></div>')
+  var top='<div class="modal-body" style="padding-bottom:6px">'
+    +'<div class="slbl" style="margin-bottom:6px">Mensaje para el grupo</div>'
+    +'<textarea id="wa-txt" class="inp" rows="12" style="font-family:inherit;font-size:13px;line-height:1.45;resize:vertical">'+waText(cv,t).replace(/&/g,"&amp;").replace(/</g,"&lt;")+'</textarea>'
+    +'<div style="font-size:11px;color:var(--ink3);margin:-4px 0 10px">Podés editarlo antes de mandarlo.</div>'
+    +'<div style="display:flex;gap:8px"><button class="btn btn-o" id="wa-cp" style="flex:1" onclick="cp(document.getElementById(\'wa-txt\').value,\'wa-cp\')">📋 Copiar</button>'
+    +'<button class="btn btn-p" style="flex:1;background:#157a43" onclick="shareWA()">WhatsApp</button></div>'
+    +'<div class="slbl" style="margin:18px 0 0">Invitaciones individuales</div></div>';
+  showOverlay(mHdr("📲 Compartir convocatoria")+top+rows+'</div><div class="modal-body" style="padding-top:10px"><button class="btn btn-o" onclick="closeOverlay()">Cerrar</button></div>')
 }
 function cpW(key,bid){cp(window[key]||"",bid)}
+// Texto de convocatoria con el formato que usa el DT en WhatsApp
+function waText(cv,t){
+  var dias=["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+  var d=new Date(cv.fecha+"T12:00:00"),p=cv.fecha.split("-");
+  var emo=(t.name.match(/^(\S+)\s/)||["",""])[1];var nom=t.name.replace(/^\S+\s/,"");if(!emo){emo="";nom=t.name}
+  var rival=cv.rival.replace(/^vs\.\s*/i,"");
+  var L=[];
+  if(cv.tipo==="entrenamiento")L.push(nom.toUpperCase()+(emo?" "+emo:"")+" · 🏃 Entrenamiento");
+  else L.push(nom.toUpperCase()+(emo?" "+emo:"")+" 🆚 "+rival);
+  L.push("");
+  L.push("📅 "+dias[d.getDay()]+" "+parseInt(p[2],10)+"/"+parseInt(p[1],10));
+  var c=citOf(cv);
+  L.push("⏰ "+(c?c+" citados (partido "+cv.hora+")":cv.hora+"hs"));
+  L.push("🏟️ "+cv.lugar);
+  L.push("");
+  var n=0;cv.jug.forEach(function(jid){var j=fJ(t.id,jid);if(j){n++;L.push(n+". "+j.n)}});
+  L.push("");
+  L.push("Por favor confirmen en Squadra si van y respeten el horario 🙏");
+  return L.join("\n");
+}
+function shareWA(){var ta=document.getElementById("wa-txt");if(!ta)return;window.open("https://wa.me/?text="+encodeURIComponent(ta.value),"_blank")}
 
 function rDTMatch(){
 var cv=matchCV();
