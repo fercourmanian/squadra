@@ -831,7 +831,20 @@ var _SAVE_KEYS={teams:"sq_teams",children:"sq_children",accounts:"sq_accounts",r
 function gT(id){for(var i=0;i<TEAMS.length;i++)if(TEAMS[i].id===(id||TID))return TEAMS[i];return TEAMS[0]}
 function T(){return gT(TID)}
 function gSt(id){for(var i=0;i<SP.length;i++)if(SP[i].id===id)return SP[i];return null}
-function fJ(tmid,jid){var t=gT(tmid);for(var i=0;i<t.j.length;i++)if(t.j[i].id===jid)return t.j[i];return null}
+// Prestamos: un jugador de otro equipo se referencia con id negativo -(idEquipoOrigen*1000 + idJugador)
+function gid(tid,jid){return-(tid*1000+jid)}
+function fJ(tmid,jid){
+  if(jid<0){var st=Math.floor(-jid/1000),sj=(-jid)%1000,src=null;for(var k=0;k<TEAMS.length;k++)if(TEAMS[k].id===st)src=TEAMS[k];if(!src)return null;
+    for(var q=0;q<src.j.length;q++)if(src.j[q].id===sj){var o={};for(var x in src.j[q])o[x]=src.j[q][x];o.id=jid;o.prest=src.id;return o}return null}
+  var t=gT(tmid);for(var i=0;i<t.j.length;i++)if(t.j[i].id===jid)return t.j[i];return null}
+function tEmo(t){var m=t&&t.name.match(/^(\S+)\s/);return m&&!/[A-Za-z0-9]/.test(m[1])?m[1]:""}
+function prestBdg(j){if(!j||!j.prest)return"";var st=gT(j.prest);return'<span class="bdg" style="background:#eef6fb;color:#0B4A6F;border:1px solid #cfe6f3;margin-left:4px">'+tEmo(st)+' préstamo</span>'}
+function loanTeams(t){return TEAMS.filter(function(x){return x.id!==t.id&&x.cat===t.cat})}
+// Aviso al DT del equipo de origen (en la demo, a la campana)
+function notifyLoans(t,cv,prev){var nuevos=cv.jug.filter(function(id){return id<0&&(!prev||prev.indexOf(id)===-1)});
+  nuevos.forEach(function(id){var j=fJ(t.id,id);if(!j)return;var st=gT(j.prest);var dt=st.staff[0]?gSt(st.staff[0].sid):null;
+    ALERTS.unshift({id:Date.now()+Math.random(),tipo:"prest",msg:tEmo(t)+" "+t.name.replace(/^\S+\s/,"")+" convocó a "+j.n+" (de "+st.name+") para "+cv.rival+" · "+fmt(cv.fecha)+(dt?" · aviso a "+dt.n:""),f:"Ahora",read:false})});
+  return nuevos.length}
 // Iniciales del equipo para avatares: t.ini si existe, si no la ultima palabra del nombre (max 3 letras)
 function tIni(t){return t.ini||t.name.split(" ").pop().slice(0,3)}
 // Minimo de confirmados para dar el equipo por "listo" (configurable por equipo; si no, el formato)
@@ -1759,6 +1772,7 @@ function rDTConvs(){
 
     h+='<div class="act-bar">'
       +'<button class="btn-sm" onclick="openShare('+cv.id+')">📲 Compartir</button>'
+      +'<button class="btn-sm" style="'+(cv.tipo!=="entrenamiento"&&si<minConf(t)?'color:#c2410c;border-color:#fdba74;font-weight:700':'')+'" onclick="openAddToConv('+cv.id+')">+ Sumar jugador</button>'
       +(isToday?'<button class="btn-sm" style="color:#e67e00;border-color:#f0c000" onclick="navTo(2)">⚽ Match Day</button>':'')
       +'</div>';
 
@@ -1778,7 +1792,7 @@ function rDTConvs(){
         +av(j,28,t.color)
         +'<div style="flex:1;min-width:0;margin-left:2px">'
           +'<div class="pl-name">'+j.n+'</div>'
-          +'<div class="pl-sub">'+j.p+'</div>'
+          +'<div class="pl-sub">'+j.p+prestBdg(j)+'</div>'
         +'</div>'
         +'<div style="display:flex;align-items:center;gap:3px">'
         +(r==="si"?'<span class="bdg bdg-si">✓ SÍ</span>':r==="no"?'<span class="bdg bdg-no">✗ NO</span>':'<span class="bdg bdg-pd">? PEND</span>')
@@ -1932,6 +1946,21 @@ function openShare(cvid,tid){
   showOverlay(mHdr("📲 Compartir convocatoria")+top+rows+'</div><div class="modal-body" style="padding-top:10px"><button class="btn btn-o" onclick="closeOverlay()">Cerrar</button></div>')
 }
 function cpW(key,bid){cp(window[key]||"",bid)}
+function openAddToConv(cvid){var t=T(),cv=fCV(TID,cvid);if(!cv)return;
+  var row=function(j,id,color,sub){return'<div class="card-row">'+av(j,26,color)+'<div style="flex:1;margin-left:6px;min-width:0"><div style="font-size:13px;font-weight:600">'+j.n+'</div><div style="font-size:11px;color:var(--ink3)">'+sub+'</div></div><button class="btn-sm" onclick="addToConv('+cvid+','+id+')">+ Sumar</button></div>'};
+  var own=t.j.filter(function(j){return cv.jug.indexOf(j.id)===-1});
+  var h='<div class="modal-body" style="padding-bottom:4px"><div style="font-size:12px;color:var(--ink3)">'+(cv.tipo!=="entrenamiento"?'Van '+cvCount(cv).si+' de '+minConf(t)+'. ':'')+'Primero los no convocados de tu equipo; después, préstamos de la categoría.</div></div>';
+  h+='<div class="slbl" style="padding:8px 16px 4px">'+t.name+' · no convocados ('+own.length+')</div><div class="card" style="margin:0 12px 10px">';
+  h+=own.length?own.map(function(j){return row(j,j.id,t.color,j.p)}).join(''):'<div style="padding:12px;font-size:12px;color:var(--ink3)">Están todos convocados.</div>';
+  h+='</div>';
+  loanTeams(t).forEach(function(o){var av2=o.j.filter(function(j){return cv.jug.indexOf(gid(o.id,j.id))===-1});
+    h+='<div class="slbl" style="padding:8px 16px 4px">Préstamo · '+o.name+' ('+av2.length+')</div><div class="card" style="margin:0 12px 10px">';
+    h+=av2.length?av2.map(function(j){return row(j,gid(o.id,j.id),o.color,j.p+' · le avisamos a su DT')}).join(''):'<div style="padding:12px;font-size:12px;color:var(--ink3)">Ya están todos sumados.</div>';
+    h+='</div>'});
+  showOverlay(mHdr("+ Sumar jugador")+h+'<div class="modal-body" style="padding-top:6px"><button class="btn btn-o" onclick="closeOverlay()">Listo</button></div>')}
+function addToConv(cvid,id){var t=T(),cv=fCV(TID,cvid);if(!cv||cv.jug.indexOf(id)!==-1)return;var prev=cv.jug.slice();cv.jug.push(id);cv.resp[id]="pendiente";
+  var j=fJ(TID,id);var nl=notifyLoans(t,cv,prev);saveState();render();openAddToConv(cvid);
+  toast("➕ "+(j?j.n.split(" ")[0]:"Jugador")+" sumado"+(nl?" · avisamos a su DT":""))}
 // Texto de convocatoria con el formato que usa el DT en WhatsApp
 function waText(cv,t){
   var dias=["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
@@ -1947,7 +1976,7 @@ function waText(cv,t){
   L.push("⏰ "+(c?c+" citados (partido "+cv.hora+")":cv.hora+"hs"));
   L.push("🏟️ "+cv.lugar);
   L.push("");
-  var n=0;cv.jug.forEach(function(jid){var j=fJ(t.id,jid);if(j){n++;L.push(n+". "+j.n)}});
+  var n=0;cv.jug.forEach(function(jid){var j=fJ(t.id,jid);if(j){n++;L.push(n+". "+j.n+(j.prest?" ("+tEmo(gT(j.prest))+")":""))}});
   L.push("");
   L.push("Por favor confirmen en Squadra si van y respeten el horario 🙏");
   return L.join("\n");
@@ -2281,7 +2310,7 @@ function openWz(eid,did){
   _WZ={active:true,step:1,eid:eid,did:did,data:{tipo:"partido",rival:"",fecha:nw.toISOString().split("T")[0],hora:"10:00",lugar:"",lim:lm.toISOString().split("T")[0],jug:{},esp:{entrada:"gratis",entradaMonto:"",estac:"no",estacMonto:""},log:{enc:"",henc:"07:30",trans:"",alm:"",costo:""},torneo_id:null}};
   if(eid){var cv=fCV(TID,eid);if(cv){_WZ.data={tipo:cv.tipo,rival:cv.rival,fecha:cv.fecha,hora:cv.hora,lugar:cv.lugar,lim:cv.lim,jug:{},esp:cv.esp?JSON.parse(JSON.stringify(cv.esp)):{entrada:"gratis",entradaMonto:"",estac:"no",estacMonto:""},log:cv.logistica?JSON.parse(JSON.stringify(cv.logistica)):{enc:"",henc:"07:30",trans:"",alm:"",costo:""}};cv.jug.forEach(function(i){_WZ.data.jug[i]=true})}}
   else if(did){var cv=fCV(TID,did);if(cv){_WZ.data={tipo:cv.tipo,rival:cv.rival+" (copia)",fecha:nw.toISOString().split("T")[0],hora:cv.hora,lugar:cv.lugar,lim:lm.toISOString().split("T")[0],jug:{},esp:cv.esp?JSON.parse(JSON.stringify(cv.esp)):{entrada:"gratis",entradaMonto:"",estac:"no",estacMonto:""},log:cv.logistica?JSON.parse(JSON.stringify(cv.logistica)):{enc:"",henc:"07:30",trans:"",alm:"",costo:""}};cv.jug.forEach(function(i){_WZ.data.jug[i]=true})}}
-  if(eid){var _ec=fCV(TID,eid);if(_ec&&_ec.cit)_WZ.data.cit=_ec.cit}
+  window._wzPrevJug=null;if(eid){var _ec=fCV(TID,eid);if(_ec){if(_ec.cit)_WZ.data.cit=_ec.cit;window._wzPrevJug=_ec.jug.slice()}}
   renderWz()
 }
 function renderWz(){
@@ -2345,7 +2374,7 @@ function wS2(){
   return h
 }
 function wS3(){var js=T().j;var tid=TID;var sc=Object.keys(_WZ.data.jug).length;
-var h='<button onclick="wzSelAll()" style="font-size:11px;font-weight:600;color:var(--tc);cursor:pointer;border:none;background:none;font-family:inherit;margin-bottom:4px">'+(sc===js.length?"Deseleccionar todos":"Seleccionar todos ("+js.length+")")+'</button>';
+var h='<button onclick="wzSelAll()" style="font-size:11px;font-weight:600;color:var(--tc);cursor:pointer;border:none;background:none;font-family:inherit;margin-bottom:4px">'+(js.every(function(j){return _WZ.data.jug[j.id]})?"Deseleccionar todos":"Seleccionar todos ("+js.length+")")+'</button>';
 h+='<div class="att-legend" style="margin-bottom:6px">';
 h+='<span><span class="att-legend-dot" style="background:#22c55e;display:inline-block"></span> Asistió</span>';
 h+='<span><span class="att-legend-dot" style="background:#e5e7eb;display:inline-block"></span> No (ent.)</span>';
@@ -2364,10 +2393,15 @@ h+='<span style="font-size:11px;color:var(--ink3)">'+j.p+' · #'+j.num+'</span>'
 h+='</div>';
 h+='<div style="margin-top:2px">'+renderAttDots(tid,j.id)+'</div>';
 h+='</div></div>'});
+if(!window._wzLoan)window._wzLoan={};
+loanTeams(T()).forEach(function(o){var open=!!window._wzLoan[o.id];var nsel=o.j.filter(function(j){return _WZ.data.jug[gid(o.id,j.id)]}).length;
+h+='<div role="button" onclick="window._wzLoan['+o.id+']=!window._wzLoan['+o.id+'];renderWz()" style="display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:8px 6px;margin-top:8px;border-top:1px solid var(--border);cursor:pointer;font-size:12px;font-weight:700;color:var(--ink2)"><span>'+(open?'▾':'▸')+' Préstamos de '+o.name+' ('+o.j.length+')</span>'+(nsel?'<span class="bdg bdg-si">'+nsel+' elegidos</span>':'')+'</div>';
+if(open)o.j.forEach(function(j){var g=gid(o.id,j.id);var sl=!!_WZ.data.jug[g];
+h+='<div class="sel-item'+(sl?" on":"")+'" onclick="togWzJ('+g+')"><div class="ck">'+(sl?"✓":"")+'</div>'+av(j,22,o.color)+'<div style="flex:1;margin-left:5px;min-width:0"><div style="font-size:12px;font-weight:600">'+j.n+'</div><div style="font-size:11px;color:var(--ink3)">'+j.p+' · '+o.name+'</div></div></div>'});});
 return h+'</div><div style="font-size:11px;color:var(--ink3);text-align:center;margin-top:7px">'+sc+' seleccionados</div>'}
 function wS4(){var lg=_WZ.data.log;return'<div class="inp-lbl">Punto de encuentro</div><input class="inp" value="'+lg.enc+'" oninput="_WZ.data.log.enc=this.value"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><div class="inp-lbl">Hora de cita</div><input type="time" class="inp" style="margin:0" value="'+lg.henc+'" onchange="_WZ.data.log.henc=this.value"></div><div><div class="inp-lbl">Costo</div><input class="inp" style="margin:0" value="'+lg.costo+'" oninput="_WZ.data.log.costo=this.value"></div></div><div style="height:8px"></div><div class="inp-lbl">Transporte</div><input class="inp" value="'+lg.trans+'" oninput="_WZ.data.log.trans=this.value"><div class="inp-lbl">Almuerzo</div><input class="inp" value="'+lg.alm+'" oninput="_WZ.data.log.alm=this.value">'}
 function togWzJ(id){if(_WZ.data.jug[id])delete _WZ.data.jug[id];else _WZ.data.jug[id]=true;renderWz()}
-function wzSelAll(){var js=T().j;if(Object.keys(_WZ.data.jug).length===js.length){_WZ.data.jug={}}else{js.forEach(function(j){_WZ.data.jug[j.id]=true})}renderWz()}
+function wzSelAll(){var js=T().j;var all=js.every(function(j){return _WZ.data.jug[j.id]});js.forEach(function(j){if(all)delete _WZ.data.jug[j.id];else _WZ.data.jug[j.id]=true});renderWz()}
 function wzNext(){var maxS=(_WZ.data.tipo==="torneo"||_WZ.data.tipo==="gira")?4:3;if(_WZ.step<maxS){_WZ.step++;renderWz()}else saveWz()}
 function wzBack(){if(_WZ.step>1){_WZ.step--;renderWz()}}
 async function saveWz(){
@@ -2383,7 +2417,8 @@ async function saveWz(){
         if(cpRows.length)await sb.from('conv_players').insert(cpRows);
       }
     }
-    toast("✅ Actualizada")
+    var nl=cv?notifyLoans(t,cv,window._wzPrevJug):0;
+    toast(nl?"✅ Actualizada · avisamos al otro DT":"✅ Actualizada")
   }else{
     var resp={};ids.forEach(function(i){resp[i]="pendiente"});
     var nc={id:Date.now(),tipo:_WZ.data.tipo,rival:_WZ.data.rival||"Sin nombre",fecha:_WZ.data.fecha,hora:_WZ.data.hora,cit:(_WZ.data.tipo!=="entrenamiento"?(_WZ.data.cit||citDef(_WZ.data.hora)):""),lugar:_WZ.data.lugar||"Por confirmar",lim:_WZ.data.lim,can:false,jug:ids,resp:resp,man:{},late:{},fotos:[],chat:[],esp:(_WZ.data.tipo!=="entrenamiento"?JSON.parse(JSON.stringify(_WZ.data.esp)):null),torneo_id:_WZ.data.torneo_id||null};
@@ -2395,7 +2430,7 @@ async function saveWz(){
         if(cpRows.length)await sb.from('conv_players').insert(cpRows);
       }
     }
-    t.cv.unshift(nc);toast("🎉 Convocatoria creada!")
+    t.cv.unshift(nc);var nl=notifyLoans(t,nc,null);toast(nl?"🎉 Convocatoria creada · avisamos al otro DT":"🎉 Convocatoria creada!")
   }
   closeWiz();render()
 }
@@ -2487,11 +2522,24 @@ function rPadreHome(){
       +'</div>';
 
     h+='</div>'; // /p-card
+    h+=rLoanCards(ch);
   });
 
   return h+'</div>';
 }
 
+// Convocatorias de otros equipos donde el hijo esta como prestamo
+function loanCVs(ch){var g=gid(ch.tid,ch.jid),out=[];TEAMS.forEach(function(t){if(t.id===ch.tid)return;t.cv.forEach(function(c){if(!c.can&&c.fecha>=TODAY&&c.jug.indexOf(g)!==-1)out.push({t:t,cv:c,g:g})})});
+  out.sort(function(a,b){return a.cv.fecha+(a.cv.hora||"")<b.cv.fecha+(b.cv.hora||"")?-1:1});return out}
+function loanRsvp(tid,cvid,g,r,e){if(e)e.stopPropagation();var cv=fCV(tid,cvid);if(!cv)return;recordRsvp(cv,g,r,gAcct(ACCT_ID));saveState();render();toast(r==="si"?"✅ Confirmado (préstamo)":"❌ Ausencia registrada")}
+function rLoanCards(ch){var h="";loanCVs(ch).forEach(function(o){var cv=o.cv,t=o.t,r=cv.resp[o.g]||"pendiente";
+  h+='<div class="p-card" style="border:2px solid '+t.color+'">'
+   +'<div style="padding:12px 16px 4px;font-size:12px;font-weight:700;color:'+t.color+'">'+tEmo(t)+' '+t.name.replace(/^\S+\s/,"")+' convocó a '+ch.n.split(" ")[0]+' · préstamo</div>'
+   +'<div class="p-match-row" style="border-bottom:none"><div class="p-match-ball">⚽</div><div style="flex:1;min-width:0"><span style="display:block;font-size:14px;font-weight:600;color:var(--ink)">'+cv.rival+'</span>'
+   +'<span style="font-family:var(--f-mono);font-size:11px;color:var(--ink3)">'+fmt(cv.fecha)+' · '+(citOf(cv)?'citados '+citOf(cv)+' · ':'')+cv.hora+'hs · '+cv.lugar+'</span></div></div>'
+   +'<div class="rsvp-bar" style="border-top:none;padding:4px 16px 14px">'
+   +'<button class="rsvp-btn rsvp-si'+(r==="si"?" on":"")+'" onclick="loanRsvp('+t.id+','+cv.id+','+o.g+',\'si\',event)">✓ Sí asiste</button>'
+   +'<button class="rsvp-btn rsvp-no'+(r==="no"?" on":"")+'" onclick="loanRsvp('+t.id+','+cv.id+','+o.g+',\'no\',event)">✗ No puede</button></div></div>'});return h}
 function qRsvp(kid,r,e){
   e.stopPropagation();
   var ch=gCh(kid);var t=gT(ch.tid);
@@ -2536,7 +2584,7 @@ function rPadreConv(){
     '<button class="chip '+(ptab==="myhijo"?"chip-on":"chip-off")+'" onclick="_pTabCid['+CID+']=\'myhijo\';render()">Mi hijo</button>',
     '</div>'].join("");
   h+=stabs;
-  if(ptab==="conv")h+=rPConvTab(ch,t,cv);
+  if(ptab==="conv")h+=rLoanCards(ch)+rPConvTab(ch,t,cv);
   else if(ptab==="equipo")h+=rPEquipoTab(t);
   else h+=rPMyHijoTab(ch,t);
   return h+'</div>'
