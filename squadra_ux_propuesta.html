@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Squadra — Propuesta UX</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root {
+  --f-head: 'Barlow Condensed', sans-serif;
+  --f-body: 'Plus Jakarta Sans', sans-serif;
+  --f-mono: 'DM Mono', monospace;
+  --f-serif: 'DM Serif Display', serif;
+  --ink: #111;
+  --ink2: #334155;
+  --ink3: #64748b;
+  --ink4: #94a3b8;
+  --bg: #f8f8f6;
+  --card: #fff;
+  --border: #e8e8e4;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --sq-orange: #F26419;
+  --green: #1a7a3c;
+  --green-light: #e8f5ec;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --yellow-light: #fef3c7;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--f-body); background: #1a1a1a; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 40px; min-height: 100vh; }
+
+/* Navigation between mockups */
+.mockup-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: #111; padding: 10px 16px;
+  display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+  border-bottom: 2px solid var(--sq-orange);
+}
+.mockup-nav .role-group { display: flex; gap: 4px; align-items: center; }
+.mockup-nav .role-label {
+  font-family: var(--f-head); font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px; color: var(--sq-orange);
+  margin-right: 4px;
+}
+.mockup-nav button {
+  font-family: var(--f-body); font-size: 11px; font-weight: 600;
+  padding: 5px 10px; border-radius: 6px; border: 1px solid #333;
+  background: #222; color: #aaa; cursor: pointer; transition: all .15s;
+}
+.mockup-nav button:hover { background: #333; color: #fff; }
+.mockup-nav button.active { background: var(--sq-orange); color: #fff; border-color: var(--sq-orange); }
+.mockup-nav .sep { width: 1px; height: 20px; background: #333; margin: 0 6px; }
+.mockup-nav .vs-label {
+  font-size: 10px; color: #666; margin-left: 8px; font-style: italic;
+}
+
+/* Screen wrapper */
+.screen-pair {
+  display: none; flex-direction: row; gap: 30px; align-items: flex-start;
+  justify-content: center; flex-wrap: wrap; margin-top: 56px;
+}
+.screen-pair.active { display: flex; }
+
+.screen-col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.screen-label {
+  font-family: var(--f-head); font-size: 14px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px;
+  padding: 6px 16px; border-radius: 6px;
+}
+.screen-label.before { background: #3a2020; color: #f87171; }
+.screen-label.after { background: #1a3a20; color: #4ade80; }
+.change-notes {
+  max-width: 360px; padding: 12px 16px; background: #222; border-radius: 10px;
+  font-size: 12px; color: #aaa; line-height: 1.6; margin-top: 4px;
+}
+.change-notes strong { color: var(--sq-orange); }
+
+/* Phone frame */
+.phone {
+  width: 360px; height: 720px; background: var(--bg);
+  border-radius: 32px; overflow: hidden; position: relative;
+  box-shadow: 0 0 0 3px #333, 0 20px 60px rgba(0,0,0,.5);
+  display: flex; flex-direction: column;
+}
+
+/* Header */
+.hdr {
+  padding: 14px 16px 12px; display: flex; align-items: center; gap: 10px;
+  color: #fff; flex-shrink: 0;
+}
+.hdr-coord { background: #0C0D0F; }
+.hdr-dt { background: var(--green); }
+.hdr-padre { background: #1e293b; }
+.hdr-ico {
+  width: 32px; height: 32px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; background: rgba(255,255,255,.15);
+}
+.hdr-info { flex: 1; }
+.hdr-name { font-family: var(--f-head); font-size: 17px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
+.hdr-sub { font-size: 11px; opacity: .6; margin-top: 1px; }
+.hdr-actions { display: flex; gap: 6px; }
+.hdr-btn {
+  width: 32px; height: 32px; border-radius: 50%; border: none;
+  background: rgba(255,255,255,.12); color: #fff; font-size: 14px;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+
+/* Today banner */
+.today-banner {
+  background: linear-gradient(90deg, #b45309, #d97706);
+  padding: 10px 16px; display: flex; align-items: center; justify-content: space-between;
+  color: #fff; font-size: 12px; font-weight: 600; flex-shrink: 0;
+}
+.today-banner-btn {
+  padding: 6px 14px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,.5);
+  background: none; color: #fff; font-family: var(--f-body); font-size: 11px;
+  font-weight: 700; cursor: pointer;
+}
+
+/* Content area */
+.content { flex: 1; overflow-y: auto; padding: 14px 16px 80px; }
+
+/* Bottom nav */
+.nav {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: #fff; border-top: 1px solid var(--border);
+  display: flex; height: 60px; flex-shrink: 0;
+}
+.nav-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 2px; font-size: 10px; font-weight: 600;
+  color: var(--ink4); cursor: pointer;
+}
+.nav-item.on { color: var(--sq-orange); }
+.nav-item .nav-ic { font-size: 18px; }
+
+/* Cards */
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 10px; overflow: hidden;
+}
+.card-p { padding: 13px; }
+.card-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 13px; border-bottom: 1px solid var(--border);
+}
+.card-row:last-child { border-bottom: none; }
+
+/* Section label */
+.slbl {
+  font-family: var(--f-head); font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink3);
+  margin-bottom: 8px; margin-top: 4px;
+}
+
+/* Badges */
+.bdg {
+  display: inline-flex; align-items: center; padding: 3px 8px;
+  border-radius: 6px; font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .5px;
+}
+.bdg-partido { background: #e8f5ec; color: #15803d; }
+.bdg-entren { background: #eff6ff; color: #1d4ed8; }
+.bdg-torneo { background: #fef3c7; color: #92400e; }
+.bdg-hoy { background: #fef3c7; color: #92400e; }
+
+/* Avatar */
+.av {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+
+/* Stats */
+.stat3 {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px;
+}
+.stat-box {
+  text-align: center; padding: 12px 6px;
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+}
+.stat-num { font-size: 22px; font-weight: 800; color: var(--ink); }
+.stat-lbl { font-size: 10px; font-weight: 600; color: var(--ink3); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+
+/* Buttons */
+.btn {
+  display: block; width: 100%; padding: 13px; border-radius: var(--radius-sm);
+  font-family: var(--f-body); font-size: 14px; font-weight: 700;
+  text-align: center; cursor: pointer; border: none;
+}
+.btn-p { background: var(--green); color: #fff; }
+.btn-orange { background: var(--sq-orange); color: #fff; }
+.btn-o { background: none; border: 1.5px solid var(--border); color: var(--ink2); }
+.btn-sm {
+  display: inline-flex; align-items: center; padding: 5px 10px;
+  border-radius: 7px; border: 1px solid var(--border); background: #fff;
+  font-family: var(--f-body); font-size: 11px; font-weight: 600;
+  color: var(--ink2); cursor: pointer;
+}
+
+/* Progress */
+.prog-bar { height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 3px; background: var(--green); }
+
+/* RSVP buttons */
+.rsvp-btn {
+  padding: 8px 16px; border-radius: 10px; font-family: var(--f-body);
+  font-size: 14px; font-weight: 700; cursor: pointer; border: 2px solid var(--border);
+  background: #fff; color: var(--ink3);
+}
+.rsvp-si { border-color: #22c55e; color: #22c55e; }
+.rsvp-si.on { background: #22c55e; color: #fff; }
+.rsvp-no { border-color: #ef4444; color: #ef4444; }
+.rsvp-no.on { background: #ef4444; color: #fff; }
+
+/* Chat */
+.chat-area { max-height: 160px; overflow-y: auto; padding: 8px 0; }
+.msg { display: flex; gap: 8px; margin-bottom: 10px; align-items: flex-start; }
+.msg-av { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.msg-who { font-size: 10px; font-weight: 600; color: var(--ink3); margin-bottom: 2px; }
+.msg-bub { font-size: 12px; line-height: 1.4; padding: 8px 11px; border-radius: 12px; max-width: 220px; }
+.msg-bub.dt { background: #1e293b; color: #fff; }
+.msg-bub.them { background: #f1f5f9; color: var(--ink); }
+.msg-dt-badge { font-size: 8px; background: var(--sq-orange); color: #fff; padding: 1px 4px; border-radius: 3px; margin-left: 4px; font-weight: 700; }
+.msg-t { font-size: 9px; color: var(--ink4); align-self: flex-end; }
+
+/* Attendance dots */
+.att-dots { display: flex; gap: 3px; align-items: center; }
+.att-d { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.att-d.si { background: #22c55e; }
+.att-d.no-e { background: #e5e7eb; }
+.att-d.no-p { background: #ef4444; }
+.att-d.nc { background: none; border: 1.5px solid #d1d5db; }
+
+/* Wizard step */
+.wiz-player {
+  display: flex; align-items: center; gap: 10px; padding: 10px 13px;
+  border-bottom: 1px solid var(--border); cursor: pointer;
+}
+.wiz-player .check {
+  width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: #fff;
+}
+.wiz-player .check.on { background: var(--green); border-color: var(--green); }
+
+/* Match Day wizard flow */
+.md-step {
+  text-align: center; padding: 20px 0;
+}
+.md-step-num {
+  width: 36px; height: 36px; border-radius: 50%; display: inline-flex;
+  align-items: center; justify-content: center; font-size: 16px; font-weight: 800;
+  margin-bottom: 8px;
+}
+.md-step-num.done { background: var(--green); color: #fff; }
+.md-step-num.current { background: var(--sq-orange); color: #fff; }
+.md-step-num.pending { background: #e5e7eb; color: var(--ink4); }
+.md-step-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.md-step-sub { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+
+/* Score display */
+.score-compact {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  padding: 16px; background: linear-gradient(135deg, #0f172a, #1e293b);
+  border-radius: var(--radius); margin-bottom: 12px; color: #fff;
+}
+.score-team { font-size: 12px; font-weight: 600; opacity: .7; max-width: 90px; text-align: center; }
+.score-num { font-size: 42px; font-weight: 800; font-family: var(--f-head); }
+.score-sep { font-size: 28px; opacity: .3; }
+
+/* Empty state */
+.empty-state {
+  text-align: center; padding: 30px 20px;
+}
+.empty-ic { font-size: 40px; margin-bottom: 8px; }
+.empty-ttl { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.empty-sub { font-size: 12px; color: var(--ink3); line-height: 1.5; margin-bottom: 14px; }
+
+/* Upcoming event mini-card */
+.ev-mini {
+  display: flex; align-items: center; gap: 10px; padding: 10px 13px;
+  border-bottom: 1px solid var(--border);
+}
+.ev-mini:last-child { border-bottom: none; }
+.ev-date {
+  width: 40px; text-align: center; flex-shrink: 0;
+}
+.ev-date .day { font-size: 18px; font-weight: 800; color: var(--ink); line-height: 1; }
+.ev-date .month { font-size: 9px; font-weight: 700; color: var(--ink3); text-transform: uppercase; }
+.ev-info { flex: 1; min-width: 0; }
+.ev-title { font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ev-meta { font-size: 11px; color: var(--ink3); margin-top: 1px; }
+.ev-status { flex-shrink: 0; font-size: 12px; font-weight: 700; }
+
+/* Compact conv hero */
+.conv-hero-compact {
+  padding: 14px; border-radius: var(--radius); color: #fff; margin-bottom: 12px;
+}
+.conv-hero-compact .top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.conv-hero-compact .rival { font-size: 18px; font-weight: 800; flex: 1; }
+.conv-hero-compact .meta { font-size: 12px; opacity: .75; display: flex; gap: 12px; }
+.conv-hero-compact .confirm-bar { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.conv-hero-compact .confirm-nums { font-size: 12px; font-weight: 700; }
+
+/* Inline section tabs (simplified) */
+.inline-tabs {
+  display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 14px;
+}
+.inline-tab {
+  flex: 1; padding: 10px 4px; text-align: center; font-size: 12px; font-weight: 600;
+  color: var(--ink4); border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer;
+}
+.inline-tab.on { color: var(--ink); border-bottom-color: var(--ink); }
+
+/* Warning banner (softer) */
+.warn-soft {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: var(--radius-sm);
+  background: var(--yellow-light); border: 1px solid #fcd34d;
+  font-size: 11px; color: #92400e; margin-bottom: 10px;
+}
+
+/* Player row in wizard — 2 lines */
+.wiz-player-v2 {
+  display: flex; align-items: flex-start; gap: 10px; padding: 10px 13px;
+  border-bottom: 1px solid var(--border); cursor: pointer;
+}
+.wiz-player-v2 .pl-info { flex: 1; }
+.wiz-player-v2 .pl-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.wiz-player-v2 .pl-pos { font-size: 11px; color: var(--ink3); }
+.wiz-player-v2 .pl-dots { margin-top: 4px; display: flex; gap: 12px; align-items: center; }
+.wiz-player-v2 .dot-group { display: flex; align-items: center; gap: 2px; }
+.wiz-player-v2 .dot-label { font-size: 8px; font-weight: 700; color: var(--ink4); text-transform: uppercase; margin-right: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<div class="mockup-nav" id="mockup-nav">
+  <div class="role-group">
+    <span class="role-label">Coord</span>
+    <button onclick="show('coord-club')" id="btn-coord-club">Club</button>
+    <button onclick="show('coord-gestion')" id="btn-coord-gestion">Gestión</button>
+    <button onclick="show('coord-cal')" id="btn-coord-cal">Calendario</button>
+    <button onclick="show('coord-perfil')" id="btn-coord-perfil">Estadísticas</button>
+  </div>
+  <div class="sep"></div>
+  <div class="role-group">
+    <span class="role-label">DT</span>
+    <button onclick="show('dt-home')" id="btn-dt-home">Equipo</button>
+    <button onclick="show('dt-home-empty')" id="btn-dt-home-empty">Eq. (vacío)</button>
+    <button onclick="show('dt-convs')" id="btn-dt-convs">Convocatorias</button>
+    <button onclick="show('dt-match')" id="btn-dt-match">Match Day</button>
+    <button onclick="show('dt-perfil')" id="btn-dt-perfil">Estadísticas</button>
+  </div>
+  <div class="sep"></div>
+  <div class="role-group">
+    <span class="role-label">Padre</span>
+    <button onclick="show('padre-home')" id="btn-padre-home">Mis Hijos</button>
+    <button onclick="show('padre-conv')" id="btn-padre-conv">Convocatoria</button>
+    <button onclick="show('padre-live')" id="btn-padre-live">En Vivo</button>
+    <button onclick="show('padre-perfil')" id="btn-padre-perfil">Perfil</button>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- COORDINADOR — CLUB -->
+<!-- ============================================ -->
+<div class="screen-pair" id="coord-club">
+  <div class="screen-col">
+    <span class="screen-label after">PROPUESTA</span>
+    <div class="phone">
+      <div class="hdr hdr-coord">
+        <div class="hdr-ico" style="background:none">
+          <svg viewBox="0 0 40 40" width="28" height="28"><polygon points="20,2 38,14 31,35 9,35 2,14" fill="none" stroke="#F26419" stroke-width="2.5" stroke-linejoin="round"/><text x="20" y="27" text-anchor="middle" font-family="DM Serif Display" font-size="20" font-weight="400" fill="#F26419">S</text></svg>
+        </div>
+        <div class="hdr-info">
+          <div class="hdr-name">Club Náutico San Isidro</div>
+          <div class="hdr-sub">Coordinador · 3 equipos</div>
+        </div>
+        <div class="hdr-actions">
+          <button class="hdr-btn">🔔</button>
+          <button class="hdr-btn">👤</button>
+        </div>
+      </div>
+      <div class="content">
+        <!-- Greeting -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:20px;font-weight:800;color:var(--ink)">Hola, Carlos! 👋</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:2px">Coordinador · 22 Mar</div>
+        </div>
+
+        <!-- Stats row -->
+        <div class="stat3">
+          <div class="stat-box"><div class="stat-num" style="color:var(--green)">2</div><div class="stat-lbl">✅ Listos</div></div>
+          <div class="stat-box"><div class="stat-num" style="color:var(--yellow)">1</div><div class="stat-lbl">⚠ Cortos</div></div>
+          <div class="stat-box"><div class="stat-num" style="color:var(--ink4)">0</div><div class="stat-lbl">Sin conv.</div></div>
+        </div>
+
+        <!-- This week -->
+        <div class="slbl">Esta semana</div>
+        <div class="card">
+          <div class="ev-mini">
+            <div class="ev-date"><div class="day">21</div><div class="month">Mar</div></div>
+            <div class="ev-info">
+              <div class="ev-title">⚽ vs. Deportivo Sur</div>
+              <div class="ev-meta">Los Pumas A · 10:00hs · Cancha A</div>
+            </div>
+            <div class="ev-status" style="color:var(--green)">8/13</div>
+          </div>
+          <div class="ev-mini">
+            <div class="ev-date"><div class="day">21</div><div class="month">Mar</div></div>
+            <div class="ev-info">
+              <div class="ev-title">⚽ vs. Náutico Tigre</div>
+              <div class="ev-meta">Los Pumas · 11:30hs · Club Tigre</div>
+            </div>
+            <div class="ev-status" style="color:var(--yellow)">6/7</div>
+          </div>
+          <div class="ev-mini">
+            <div class="ev-date"><div class="day">23</div><div class="month">Mar</div></div>
+            <div class="ev-info">
+              <div class="ev-title">🏃 Entrenamiento</div>
+              <div class="ev-meta">Los Pumas A · 17:00hs</div>
+            </div>
+            <div class="ev-status" style="color:var(--ink4)">—</div>
+          </div>
+        </div>
+
+        <!-- Teams -->
+        <div class="slbl">Equipos</div>
+        <div class="card">
+          <div class="card-row" style="cursor:pointer">
+            <div class="av" style="background:var(--green)">A</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Los Pumas A</div>
+              <div style="font-size:11px;color:var(--ink3)">Sub-12 · 13 jugadores · Carlos Méndez</div>
+            </div>
+            <span class="bdg bdg-partido" style="font-size:9px">✅ Listo</span>
+          </div>
+          <div class="card-row" style="cursor:pointer">
+            <div class="av" style="background:#0e7490">B</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Los Pumas B</div>
+              <div style="font-size:11px;color:var(--ink3)">Sub-12 · 11 jugadores · Carlos Méndez</div>
+            </div>
+            <span class="bdg" style="background:var(--yellow-light);color:#92400e;font-size:9px">⚠ Corto</span>
+          </div>
+          <div class="card-row" style="cursor:pointer">
+            <div class="av" style="background:#8e44ad">P</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700">Los Pumas</div>
+              <div style="font-size:11px;color:var(--ink3)">Sub-10 · 10 jugadores · Martín Gómez</div>
+            </div>
+            <span class="bdg bdg-partido" style="font-size:9px">✅ Listo</span>
+          </div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item on"><div class="nav-ic">🏠</div>Club</div>
+        <div class="nav-item"><div class="nav-ic">🗂</div>Gestión</div>
+        <div class="nav-item"><div class="nav-ic">📅</div>Calendario</div>
+        <div class="nav-item"><div class="nav-ic">📊</div>Estadísticas</div>
+      </div>
+    </div>
+    <div class="change-notes">
+      <strong>Cambios:</strong> Saludo personalizado arriba. Se sacó pool de técnicos (→ Gestión). Se agregó "Esta semana". El tab "Perfil" se reemplazó por "Estadísticas" — Perfil se accede desde el 👤 del header.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- COORDINADOR — GESTIÓN -->
+<!-- ============================================ -->
+<div class="screen-pair" id="coord-gestion">
+  <div class="screen-col">
+    <span class="screen-label after">PROPUESTA</span>
+    <div class="phone">
+      <div class="hdr hdr-coord">
+        <div class="hdr-ico" style="background:none">
+          <svg viewBox="0 0 40 40" width="28" height="28"><polygon points="20,2 38,14 31,35 9,35 2,14" fill="none" stroke="#F26419" stroke-width="2.5" stroke-linejoin="round"/><text x="20" y="27" text-anchor="middle" font-family="DM Serif Display" font-size="20" font-weight="400" fill="#F26419">S</text></svg>
+        </div>
+        <div class="hdr-info">
+          <div class="hdr-name">Club Náutico San Isidro</div>
+          <div class="hdr-sub">Coordinador · 3 equipos</div>
+        </div>
+        <div class="hdr-actions">
+          <button class="hdr-btn">🔔</button>
+          <button class="hdr-btn">👤</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="slbl">Categorías</div>
+
+        <!-- Sub-12 card with teams inside -->
+        <div class="card" style="margin-bottom:14px">
+          <div style="padding:13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)">
+            <div style="font-size:20px">⚽</div>
+            <div style="flex:1">
+              <div style="font-size:15px;font-weight:700">Sub-12</div>
+              <div style="font-size:11px;color:var(--ink3)">2 equipos · 24 jugadores</div>
+            </div>
+            <span style="font-size:14px;color:var(--ink4)">›</span>
+          </div>
+          <div class="card-row">
+            <div class="av" style="width:30px;height:30px;font-size:10px;background:var(--green)">A</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Los Pumas A</div><div style="font-size:10px;color:var(--ink3)">13 jug · 7v7</div></div>
+            <span style="font-size:13px;color:var(--ink4)">›</span>
+          </div>
+          <div class="card-row">
+            <div class="av" style="width:30px;height:30px;font-size:10px;background:#0e7490">B</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Los Pumas B</div><div style="font-size:10px;color:var(--ink3)">11 jug · 7v7</div></div>
+            <span style="font-size:13px;color:var(--ink4)">›</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:14px">
+          <div style="padding:13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)">
+            <div style="font-size:20px">⚽</div>
+            <div style="flex:1">
+              <div style="font-size:15px;font-weight:700">Sub-10</div>
+              <div style="font-size:11px;color:var(--ink3)">1 equipo · 10 jugadores</div>
+            </div>
+            <span style="font-size:14px;color:var(--ink4)">›</span>
+          </div>
+          <div class="card-row">
+            <div class="av" style="width:30px;height:30px;font-size:10px;background:#8e44ad">P</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Los Pumas</div><div style="font-size:10px;color:var(--ink3)">10 jug · 5v5</div></div>
+            <span style="font-size:13px;color:var(--ink4)">›</span>
+          </div>
+        </div>
+
+        <button class="btn btn-o" style="margin-bottom:16px">+ Nueva categoría</button>
+
+        <!-- Staff pool moved here -->
+        <div class="slbl">Cuerpo técnico</div>
+        <div class="card">
+          <div class="card-row">
+            <div class="av" style="width:30px;height:30px;font-size:10px;background:#374151">CM</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Carlos Méndez</div><div style="font-size:10px;color:var(--ink3)">Pumas A, Pumas B</div></div>
+            <span class="bdg" style="background:#e8f5ec;color:#15803d;font-size:9px">Asignado</span>
+          </div>
+          <div class="card-row">
+            <div class="av" style="width:30px;height:30px;font-size:10px;background:#374151">MG</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Martín Gómez</div><div style="font-size:10px;color:var(--ink3)">Los Pumas</div></div>
+            <span class="bdg" style="background:#e8f5ec;color:#15803d;font-size:9px">Asignado</span>
+          </div>
+          <div class="card-row">
+            <div class="av" style="width:30px;height:30px;font-size:10px;background:#374151">DP</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Diego Peralta</div><div style="font-size:10px;color:var(--ink3)">Pumas A</div></div>
+            <span class="bdg" style="background:#e8f5ec;color:#15803d;font-size:9px">Asignado</span>
+          </div>
+        </div>
+        <button class="btn btn-o">+ Agregar técnico</button>
+
+        <div class="slbl" style="margin-top:16px">Códigos de acceso</div>
+        <div class="card">
+          <div class="card-row">
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Sub-12</div><div style="font-size:10px;color:var(--ink3)">Sin código generado</div></div>
+            <button class="btn-sm">+ Generar</button>
+          </div>
+          <div class="card-row">
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Sub-10</div><div style="font-size:10px;color:var(--ink3)">Sin código generado</div></div>
+            <button class="btn-sm">+ Generar</button>
+          </div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item"><div class="nav-ic">🏠</div>Club</div>
+        <div class="nav-item on"><div class="nav-ic">🗂</div>Gestión</div>
+        <div class="nav-item"><div class="nav-ic">📅</div>Calendario</div>
+        <div class="nav-item"><div class="nav-ic">📊</div>Estadísticas</div>
+      </div>
+    </div>
+    <div class="change-notes">
+      <strong>Cambios:</strong> Las categorías son cards con equipos anidados (no carpetas grises). Pool de técnicos movido del Club a acá. Códigos de acceso integrados. Nav: "Perfil" → "📊 Estadísticas".
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- DT — HOME -->
+<!-- ============================================ -->
+<div class="screen-pair" id="dt-home">
+  <div class="screen-col">
+    <span class="screen-label after">PROPUESTA</span>
+    <div class="phone">
+      <div class="hdr hdr-dt">
+        <div class="hdr-ico">A</div>
+        <div class="hdr-info">
+          <div class="hdr-name">Los Pumas A</div>
+          <div class="hdr-sub">Sub-12 2014 · 2026</div>
+        </div>
+        <div class="hdr-actions">
+          <button class="hdr-btn">🔔</button>
+          <button class="hdr-btn">👤</button>
+        </div>
+      </div>
+      <div class="today-banner">
+        <div>
+          <div>⚽ Hoy hay partido</div>
+          <div style="font-size:10px;opacity:.7">Deportivo Sur · 10:00hs</div>
+        </div>
+        <button class="today-banner-btn">Match Day →</button>
+      </div>
+      <div class="content">
+        <!-- Greeting -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:20px;font-weight:800;color:var(--ink)">Hola, Carlos! 👋</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:2px">DT · Los Pumas A</div>
+        </div>
+
+        <!-- Compact hero card -->
+        <div class="conv-hero-compact" style="background:linear-gradient(135deg,var(--green),#0f5132)">
+          <div class="top">
+            <span class="bdg" style="background:rgba(255,255,255,.2);color:#fff;font-size:9px">PARTIDO</span>
+            <div class="rival">vs. Atlético Norte</div>
+          </div>
+          <div class="meta">
+            <span>📅 22 Feb</span>
+            <span>🕐 10:00hs</span>
+            <span>📍 Cancha A</span>
+          </div>
+          <div class="confirm-bar">
+            <div style="flex:1"><div class="prog-bar"><div class="prog-fill" style="width:92%"></div></div></div>
+            <div class="confirm-nums">11/12 conf.</div>
+          </div>
+        </div>
+
+        <!-- Players grouped by status -->
+        <div class="slbl">Pendientes (1)</div>
+        <div class="card" style="margin-bottom:12px;border-left:3px solid var(--yellow)">
+          <div class="card-row">
+            <div class="av" style="width:32px;height:32px;font-size:11px;background:var(--green)">EF</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Ezequiel Flores</div><div style="font-size:10px;color:var(--ink3)">Delantero · #12</div></div>
+            <span class="bdg" style="background:#fef3c7;color:#92400e">PEND</span>
+          </div>
+        </div>
+
+        <div class="slbl">Confirmados (11)</div>
+        <div class="card">
+          <div class="card-row">
+            <div class="av" style="width:32px;height:32px;font-size:11px;background:var(--green)">TG</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Tomás García</div><div style="font-size:10px;color:var(--ink3)">Portero · #1</div></div>
+            <span class="bdg bdg-partido" style="font-size:9px">✓ SÍ</span>
+          </div>
+          <div class="card-row">
+            <div class="av" style="width:32px;height:32px;font-size:11px;background:var(--green)">ML</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Mateo López</div><div style="font-size:10px;color:var(--ink3)">Defensa · #3</div></div>
+            <span class="bdg bdg-partido" style="font-size:9px">✓ SÍ</span>
+          </div>
+          <div class="card-row">
+            <div class="av" style="width:32px;height:32px;font-size:11px;background:var(--green)">SR</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Santiago Ruiz</div><div style="font-size:10px;color:var(--ink3)">Defensa · #4</div></div>
+            <span class="bdg bdg-partido" style="font-size:9px">✓ SÍ</span>
+          </div>
+          <div style="padding:8px 13px;text-align:center;font-size:11px;color:var(--ink4)">+ 8 confirmados más</div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item on"><div class="nav-ic">🏠</div>Equipo</div>
+        <div class="nav-item"><div class="nav-ic">📅</div>Convocatorias</div>
+        <div class="nav-item"><div class="nav-ic">⚽</div>Match Day</div>
+        <div class="nav-item"><div class="nav-ic">📊</div>Estadísticas</div>
+      </div>
+    </div>
+    <div class="change-notes">
+      <strong>Cambios:</strong> Saludo personalizado. Hero comprimido. Jugadores agrupados por estado (pendientes primero). Nav: "Perfil" → "📊 Estadísticas". Perfil se accede desde el 👤 del header.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- DT — HOME VACÍO (sin convocatoria activa) -->
+<!-- ============================================ -->
+<div class="screen-pair" id="dt-home-empty">
+  <div class="screen-col">
+    <span class="screen-label after">PROPUESTA</span>
+    <div class="phone">
+      <div class="hdr hdr-dt">
+        <div class="hdr-ico">A</div>
+        <div class="hdr-info">
+          <div class="hdr-name">Los Pumas A</div>
+          <div class="hdr-sub">Sub-12 2014 · 2026</div>
+        </div>
+        <div class="hdr-actions">
+          <button class="hdr-btn">🔔</button>
+          <button class="hdr-btn">👤</button>
+        </div>
+      </div>
+      <div class="content">
+        <!-- Greeting -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:20px;font-weight:800;color:var(--ink)">Hola, Carlos! 👋</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:2px">DT · Los Pumas A</div>
+        </div>
+
+        <!-- No active convocation -->
+        <div class="card" style="padding:20px;text-align:center;margin-bottom:16px;border:1.5px dashed var(--border)">
+          <div style="font-size:28px;margin-bottom:8px">📅</div>
+          <div style="font-size:13px;font-weight:700;color:var(--ink)">Sin convocatorias próximas</div>
+          <div style="font-size:11px;color:var(--ink3);margin-top:4px;line-height:1.5">Creá una convocatoria para el próximo partido o entrenamiento</div>
+          <button class="btn btn-p" style="margin-top:12px;font-size:13px;padding:10px 20px">+ Crear convocatoria</button>
+        </div>
+
+        <!-- Plantel summary -->
+        <div class="sec">
+          <div class="slbl">Tu plantel</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+            <div class="card" style="padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:800;color:var(--green)">14</div>
+              <div style="font-size:10px;color:var(--ink3)">Jugadores</div>
+            </div>
+            <div class="card" style="padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:800;color:var(--sq-orange)">8</div>
+              <div style="font-size:10px;color:var(--ink3)">Partidos</div>
+            </div>
+            <div class="card" style="padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:800;color:var(--ink)">5V 2E 1D</div>
+              <div style="font-size:10px;color:var(--ink3)">Récord</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Players by position -->
+        <div class="sec">
+          <div class="slbl">Jugadores por posición</div>
+          <div class="card" style="padding:0">
+            <div style="padding:10px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)">
+              <span style="font-size:11px;font-weight:700;color:var(--sq-orange)">ARQ</span>
+              <div style="flex:1;display:flex;gap:4px;flex-wrap:wrap">
+                <div class="av" style="width:26px;height:26px;font-size:9px;background:var(--green)">LM</div>
+                <div class="av" style="width:26px;height:26px;font-size:9px;background:var(--green)">FC</div>
+              </div>
+              <span style="font-size:11px;color:var(--ink4)">2</span>
+            </div>
+            <div style="padding:10px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)">
+              <span style="font-size:11px;font-weight:700;color:var(--sq-orange)">DEF</span>
+              <div style="flex:1;display:flex;gap:4px;flex-wrap:wrap">
+                <div class="av" style="width:26px;height:26px;font-size:9px;background:var(--green)">MR</div>
+                <div class="av" style="width:26px;height:26px;font-size:9px;background:var(--green)">SP</div>
+                <div class="av" style="width:26px;height:26px;font-size:9px;background:var(--green)">TB</div>
+                <div class="av" style="width:26px;height:26px;font-size:9px;background:var(--green)">JG</div>
+              </div>
+              <span style="font-size:11px;color:var(--ink4)">4</span>
+            </div>
+            <div style="padding:10px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)">
+              <span style="font-size:11px;font-weight:700;color:var(--sq-orange)">MED</span>
+              <div style="flex:1;display:flex;gap:4px;flex-wrap:wrap">
+                <div class="av" style="width:26px;height:26px;font-size:9px;background:var(--green)">VS</div>
+                <div class="av" style="width:26px;height:26px;font-size:9px;background:var(--green)">NL</div>
+                <div class="av" style="width:26px;height:26px;font-size:9px;background:var(--green)">RA</div>
+                <div class="av" style="width:26px;height:26px;font-size:9px;background:var(--green)">DP</div>
+                <div class="av" style="width:26px;height:26px;font-size:9px;background:var(--green)">KM</div>
+              </div>
+              <span style="font-size:11px;color:var(--ink4)">5</span>
+            </div>
+            <div style="padding:10px 13px;display:flex;align-items:center;gap:10px">
+              <span style="font-size:11px;font-weight:700;color:var(--sq-orange)">DEL</span>
+              <div style="flex:1;display:flex;gap:4px;flex-wrap:wrap">
+                <div class="av" style="width:26px;height:26px;font-size:9px;background:var(--green)">BT</div>
+                <div class="av" style="width:26px;height:26px;font-size:9px;background:var(--green)">AG</div>
+                <div class="av" style="width:26px;height:26px;font-size:9px;background:var(--green)">EF</div>
+              </div>
+              <span style="font-size:11px;color:var(--ink4)">3</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent history -->
+        <div class="sec">
+          <div class="slbl">Últimos resultados</div>
+          <div class="card" style="padding:0">
+            <div style="padding:10px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)">
+              <span class="bdg" style="background:var(--green-light);color:var(--green);font-size:10px;font-weight:800;padding:3px 6px;border-radius:4px">V</span>
+              <div style="flex:1;font-size:12px">vs. Atlético Norte</div>
+              <span style="font-size:13px;font-weight:800">3 — 1</span>
+            </div>
+            <div style="padding:10px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)">
+              <span class="bdg" style="background:#fef3c7;color:#92400e;font-size:10px;font-weight:800;padding:3px 6px;border-radius:4px">E</span>
+              <div style="flex:1;font-size:12px">vs. Deportivo Sur</div>
+              <span style="font-size:13px;font-weight:800">2 — 2</span>
+            </div>
+            <div style="padding:10px 13px;display:flex;align-items:center;gap:10px">
+              <span class="bdg" style="background:var(--green-light);color:var(--green);font-size:10px;font-weight:800;padding:3px 6px;border-radius:4px">V</span>
+              <div style="flex:1;font-size:12px">vs. Racing Junior</div>
+              <span style="font-size:13px;font-weight:800">2 — 0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item on"><div class="nav-ic">🏠</div>Equipo</div>
+        <div class="nav-item"><div class="nav-ic">📅</div>Convocatorias</div>
+        <div class="nav-item"><div class="nav-ic">⚽</div>Match Day</div>
+        <div class="nav-item"><div class="nav-ic">📊</div>Estadísticas</div>
+      </div>
+    </div>
+    <div class="change-notes">
+      <strong>Cambios:</strong> Estado vacío del DT cuando no hay convocatoria activa. Muestra: saludo, CTA para crear convocatoria, resumen del plantel (jugadores por posición con avatares), stats rápidas, y últimos resultados. Toda la info útil sin necesidad de navegar a otras tabs.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- DT — MATCH DAY (wizard lineal) -->
+<!-- ============================================ -->
+<div class="screen-pair" id="dt-match">
+  <div class="screen-col">
+    <span class="screen-label after">PROPUESTA</span>
+    <div class="phone">
+      <div class="hdr hdr-dt">
+        <div class="hdr-ico">A</div>
+        <div class="hdr-info">
+          <div class="hdr-name">Los Pumas A</div>
+          <div class="hdr-sub">Sub-12 2014 · 2026</div>
+        </div>
+        <div class="hdr-actions">
+          <button class="hdr-btn">👤</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="score-compact">
+          <div class="score-team">Los Pumas A</div>
+          <div class="score-num">2</div>
+          <div class="score-sep">—</div>
+          <div class="score-num">1</div>
+          <div class="score-team">Deportivo Sur</div>
+        </div>
+
+        <!-- Wizard steps -->
+        <div style="display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:20px">
+          <div style="text-align:center">
+            <div class="md-step-num done">✓</div>
+            <div style="font-size:9px;font-weight:600;color:var(--green);margin-top:3px">Presentes</div>
+          </div>
+          <div style="width:30px;height:2px;background:var(--green)"></div>
+          <div style="text-align:center">
+            <div class="md-step-num done">✓</div>
+            <div style="font-size:9px;font-weight:600;color:var(--green);margin-top:3px">Formación</div>
+          </div>
+          <div style="width:30px;height:2px;background:var(--green)"></div>
+          <div style="text-align:center">
+            <div class="md-step-num current">3</div>
+            <div style="font-size:9px;font-weight:600;color:var(--sq-orange);margin-top:3px">Partido</div>
+          </div>
+        </div>
+
+        <!-- Live match content -->
+        <div style="text-align:center;margin-bottom:16px">
+          <div style="font-size:36px;font-weight:800;font-family:var(--f-mono);color:var(--ink)">23:45</div>
+          <div style="font-size:11px;color:var(--ink3)">2do tiempo</div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <button class="btn btn-p" style="flex:1;padding:10px;font-size:12px">⚽ Gol nuestro</button>
+          <button class="btn btn-o" style="flex:1;padding:10px;font-size:12px">⚽ Gol rival</button>
+        </div>
+
+        <div class="slbl">Eventos del partido</div>
+        <div class="card">
+          <div class="card-row">
+            <span style="font-size:16px">⚽</span>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Gol — Luciano Torres</div><div style="font-size:10px;color:var(--ink3)">Min 12'</div></div>
+          </div>
+          <div class="card-row">
+            <span style="font-size:16px">⚽</span>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Gol — Facundo Díaz</div><div style="font-size:10px;color:var(--ink3)">Min 18'</div></div>
+          </div>
+          <div class="card-row">
+            <span style="font-size:16px">⚽</span>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Gol rival</div><div style="font-size:10px;color:var(--ink3)">Min 21'</div></div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn-sm" style="flex:1;justify-content:center">🔄 Cambio</button>
+          <button class="btn-sm" style="flex:1;justify-content:center">🟨 Tarjeta</button>
+          <button class="btn-sm" style="flex:1;justify-content:center">📝 Nota</button>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item"><div class="nav-ic">🏠</div>Equipo</div>
+        <div class="nav-item"><div class="nav-ic">📅</div>Convocatorias</div>
+        <div class="nav-item on"><div class="nav-ic">⚽</div>Match Day</div>
+        <div class="nav-item"><div class="nav-ic">📊</div>Estadísticas</div>
+      </div>
+    </div>
+    <div class="change-notes">
+      <strong>Cambios:</strong> Se reemplazaron 4 sub-tabs por un wizard lineal (Presentes → Formación → Partido). Cada paso se completa y avanza. El marcador es compacto. Los botones de acción (gol, cambio, tarjeta) son más prominentes y accesibles.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- DT — CONVOCATORIAS (sin cambios, ya reestructurado) -->
+<!-- ============================================ -->
+<div class="screen-pair" id="dt-convs">
+  <div class="screen-col">
+    <span class="screen-label after">PROPUESTA (ya implementado)</span>
+    <div class="phone">
+      <div class="hdr hdr-dt">
+        <div class="hdr-ico">A</div>
+        <div class="hdr-info">
+          <div class="hdr-name">Los Pumas A</div>
+          <div class="hdr-sub">Sub-12 2014 · 2026</div>
+        </div>
+        <div class="hdr-actions">
+          <button class="hdr-btn">🔔</button>
+          <button class="hdr-btn">👤</button>
+        </div>
+      </div>
+      <div class="today-banner">
+        <div><div>⚽ Hoy hay partido</div><div style="font-size:10px;opacity:.7">Deportivo Sur · 10:00hs</div></div>
+        <button class="today-banner-btn">Match Day →</button>
+      </div>
+      <div class="content">
+        <button class="btn btn-p" style="margin-bottom:16px;font-size:14px;padding:13px">+ Crear convocatoria</button>
+        <div class="slbl">Próximas</div>
+        <div class="card" style="margin-bottom:10px">
+          <div style="padding:12px 13px;display:flex;align-items:center;gap:10px">
+            <span class="bdg bdg-partido">Partido</span>
+            <span class="bdg bdg-hoy">HOY</span>
+            <div style="flex:1"><div style="font-size:13px;font-weight:700">vs. Deportivo Sur</div><div style="font-size:11px;color:var(--ink3)">22 Mar · 10:00hs · Cancha A</div></div>
+            <div style="font-size:12px;font-weight:700;color:var(--green)">8/13</div>
+            <span style="font-size:11px;color:var(--ink4)">▼</span>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:10px">
+          <div style="padding:12px 13px;display:flex;align-items:center;gap:10px">
+            <span class="bdg bdg-torneo">Torneo</span>
+            <div style="flex:1"><div style="font-size:13px;font-weight:700">Gira San Fernando</div><div style="font-size:11px;color:var(--ink3)">29 Mar · 08:00hs · Club San Fernando</div></div>
+            <div style="font-size:12px;font-weight:700;color:var(--green)">11/13</div>
+            <span style="font-size:11px;color:var(--ink4)">▼</span>
+          </div>
+        </div>
+        <div class="slbl" style="margin-top:18px">Anteriores</div>
+        <div class="card" style="margin-bottom:10px">
+          <div style="padding:12px 13px;display:flex;align-items:center;gap:10px">
+            <span class="bdg bdg-partido">Partido</span>
+            <div style="flex:1"><div style="font-size:13px;font-weight:700">vs. Atlético Norte</div><div style="font-size:11px;color:var(--ink3)">22 Feb · 10:00hs</div></div>
+            <div style="font-size:12px;font-weight:700;color:var(--green)">11/12</div>
+            <span style="font-size:11px;color:var(--ink4)">▼</span>
+          </div>
+        </div>
+        <button class="btn btn-o" style="font-size:12px">Ver todas (12)</button>
+      </div>
+      <div class="nav">
+        <div class="nav-item"><div class="nav-ic">🏠</div>Equipo</div>
+        <div class="nav-item on"><div class="nav-ic">📅</div>Convocatorias</div>
+        <div class="nav-item"><div class="nav-ic">⚽</div>Match Day</div>
+        <div class="nav-item"><div class="nav-ic">📊</div>Estadísticas</div>
+      </div>
+    </div>
+    <div class="change-notes">
+      <strong>Estado:</strong> Esta pantalla ya fue reestructurada en la versión actual. CTA arriba, Próximas/Anteriores separados, "Ver todas" para las pasadas. ✅ Nav: "Perfil" → "📊 Estadísticas".
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- DT — PERFIL -->
+<!-- ============================================ -->
+<div class="screen-pair" id="dt-perfil">
+  <div class="screen-col">
+    <span class="screen-label after">PROPUESTA</span>
+    <div class="phone">
+      <div class="hdr hdr-dt">
+        <div class="hdr-ico">A</div>
+        <div class="hdr-info">
+          <div class="hdr-name">Los Pumas A</div>
+          <div class="hdr-sub">Sub-12 2014 · 2026</div>
+        </div>
+        <div class="hdr-actions"><button class="hdr-btn">👤</button></div>
+      </div>
+      <div class="content">
+        <!-- Only 2 tabs: Asistencia | Config (removed Equipo redundancy) -->
+        <div class="inline-tabs">
+          <div class="inline-tab on">Asistencia</div>
+          <div class="inline-tab">Config</div>
+        </div>
+
+        <div class="stat3">
+          <div class="stat-box"><div class="stat-num">8</div><div class="stat-lbl">Entrenam.</div></div>
+          <div class="stat-box"><div class="stat-num">5</div><div class="stat-lbl">Partidos</div></div>
+          <div class="stat-box"><div class="stat-num">13</div><div class="stat-lbl">Jugadores</div></div>
+        </div>
+
+        <!-- Filter chips -->
+        <div style="display:flex;gap:6px;margin-bottom:12px">
+          <button class="btn-sm" style="background:var(--green-light);color:var(--green);border-color:var(--green)">Todos</button>
+          <button class="btn-sm">Baja asist.</button>
+          <button class="btn-sm">Porteros</button>
+          <button class="btn-sm">Defensas</button>
+        </div>
+
+        <div class="slbl">Asistencia por jugador</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;font-size:10px;color:var(--ink3)">
+          <span>🟢 Asistió</span><span>⚪ No (ent.)</span><span>🔴 No (part.)</span><span>○ No conv.</span>
+        </div>
+
+        <div class="card">
+          <div class="card-row" style="flex-wrap:wrap">
+            <div class="av" style="width:32px;height:32px;font-size:11px;background:var(--green)">TG</div>
+            <div style="flex:1;min-width:100px"><div style="font-size:12px;font-weight:600">Tomás García</div></div>
+            <div style="font-size:11px;font-weight:700;color:var(--green)">5/5 part · 8/8 ent</div>
+            <div style="width:100%;padding-left:42px;margin-top:4px">
+              <div class="att-dots">
+                <span style="font-size:8px;color:var(--ink4);font-weight:700;margin-right:2px">ENT</span>
+                <div class="att-d si"></div><div class="att-d si"></div>
+                <span style="font-size:8px;color:var(--ink4);font-weight:700;margin:0 4px 0 8px">PART</span>
+                <div class="att-d si"></div><div class="att-d si"></div><div class="att-d si"></div><div class="att-d si"></div><div class="att-d si"></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-row" style="flex-wrap:wrap">
+            <div class="av" style="width:32px;height:32px;font-size:11px;background:var(--green)">FD</div>
+            <div style="flex:1;min-width:100px"><div style="font-size:12px;font-weight:600">Facundo Díaz</div></div>
+            <div style="font-size:11px;font-weight:700;color:var(--red)">3/5 part · 7/8 ent</div>
+            <div style="width:100%;padding-left:42px;margin-top:4px">
+              <div class="att-dots">
+                <span style="font-size:8px;color:var(--ink4);font-weight:700;margin-right:2px">ENT</span>
+                <div class="att-d si"></div><div class="att-d no-e"></div>
+                <span style="font-size:8px;color:var(--ink4);font-weight:700;margin:0 4px 0 8px">PART</span>
+                <div class="att-d si"></div><div class="att-d no-p"></div><div class="att-d si"></div><div class="att-d no-p"></div><div class="att-d si"></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-row" style="flex-wrap:wrap">
+            <div class="av" style="width:32px;height:32px;font-size:11px;background:var(--green)">VS</div>
+            <div style="flex:1;min-width:100px"><div style="font-size:12px;font-weight:600">Valentín Sosa</div></div>
+            <div style="font-size:11px;font-weight:700;color:var(--green)">5/5 part · 7/8 ent</div>
+            <div style="width:100%;padding-left:42px;margin-top:4px">
+              <div class="att-dots">
+                <span style="font-size:8px;color:var(--ink4);font-weight:700;margin-right:2px">ENT</span>
+                <div class="att-d si"></div><div class="att-d si"></div>
+                <span style="font-size:8px;color:var(--ink4);font-weight:700;margin:0 4px 0 8px">PART</span>
+                <div class="att-d si"></div><div class="att-d si"></div><div class="att-d si"></div><div class="att-d si"></div><div class="att-d si"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item"><div class="nav-ic">🏠</div>Equipo</div>
+        <div class="nav-item"><div class="nav-ic">📅</div>Convocatorias</div>
+        <div class="nav-item"><div class="nav-ic">⚽</div>Match Day</div>
+        <div class="nav-item on"><div class="nav-ic">📊</div>Estadísticas</div>
+      </div>
+    </div>
+    <div class="change-notes">
+      <strong>Cambios:</strong> Tab renombrado "Perfil" → "📊 Estadísticas". Se eliminó sub-tab "Equipo" (redundante con Home). Quedaron solo Asistencia y Config. Se agregaron filtros (Baja asist., por posición). Los dots se muestran en segunda línea para más legibilidad.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- PADRE — HOME -->
+<!-- ============================================ -->
+<div class="screen-pair" id="padre-home">
+  <div class="screen-col">
+    <span class="screen-label after">PROPUESTA</span>
+    <div class="phone">
+      <div class="hdr hdr-padre">
+        <div class="hdr-ico">⚽</div>
+        <div class="hdr-info">
+          <div class="hdr-name">Mis Hijos</div>
+          <div class="hdr-sub">Martín Díaz · Papá</div>
+        </div>
+        <div class="hdr-actions">
+          <button class="hdr-btn">🔔</button>
+          <button class="hdr-btn">👤</button>
+        </div>
+      </div>
+      <div class="content">
+        <div style="font-size:20px;font-weight:800;margin-bottom:2px">Hola, Martín! 👋</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:16px">Papá · 22 Mar</div>
+
+        <!-- Facundo card -->
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-row" style="border-bottom:1px solid var(--border)">
+            <div class="av" style="background:var(--green)">FD</div>
+            <div style="flex:1">
+              <div style="font-size:15px;font-weight:700">Facundo Díaz</div>
+              <div style="font-size:11px;color:var(--ink3)">Los Pumas A · Sub-12</div>
+            </div>
+            <span style="font-size:16px;color:var(--ink4)">›</span>
+          </div>
+          <div style="padding:12px 13px;display:flex;align-items:center;gap:10px">
+            <div style="font-size:22px">⚽</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:600">vs. Atlético Norte</div>
+              <div style="font-size:11px;color:var(--ink3)">22 Feb · 10:00hs</div>
+            </div>
+            <div style="display:flex;gap:5px">
+              <button class="rsvp-btn rsvp-si on" style="padding:6px 12px;font-size:12px">✓</button>
+              <button class="rsvp-btn rsvp-no" style="padding:6px 12px;font-size:12px">✗</button>
+            </div>
+          </div>
+          <!-- Soft warning instead of red -->
+          <div style="padding:0 13px 10px">
+            <div class="warn-soft">⚠ El límite de confirmación venció el 21 Feb</div>
+          </div>
+          <!-- Mini stats -->
+          <div style="padding:8px 13px;border-top:1px solid var(--border);display:flex;gap:16px">
+            <div style="font-size:11px;color:var(--ink3)">📊 Asistencia: <strong style="color:var(--green)">4/5 part</strong> · <strong style="color:var(--ink2)">7/8 ent</strong></div>
+          </div>
+        </div>
+
+        <!-- Rodrigo card -->
+        <div class="card">
+          <div class="card-row" style="border-bottom:1px solid var(--border)">
+            <div class="av" style="background:#8e44ad">RS</div>
+            <div style="flex:1">
+              <div style="font-size:15px;font-weight:700">Rodrigo Silva</div>
+              <div style="font-size:11px;color:var(--ink3)">Los Pumas · Sub-10</div>
+            </div>
+            <span style="font-size:16px;color:var(--ink4)">›</span>
+          </div>
+          <div style="padding:12px 13px;display:flex;align-items:center;gap:10px">
+            <div style="font-size:22px">⚽</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:600">vs. Náutico Tigre</div>
+              <div style="font-size:11px;color:var(--ink3)">22 Mar · 11:30hs</div>
+            </div>
+            <div style="display:flex;gap:5px">
+              <button class="rsvp-btn rsvp-si on" style="padding:6px 12px;font-size:12px">✓</button>
+              <button class="rsvp-btn rsvp-no" style="padding:6px 12px;font-size:12px">✗</button>
+            </div>
+          </div>
+          <div style="padding:0 13px 10px">
+            <span class="bdg bdg-hoy" style="font-size:10px">🟢 En vivo</span>
+          </div>
+          <div style="padding:8px 13px;border-top:1px solid var(--border);display:flex;gap:16px">
+            <div style="font-size:11px;color:var(--ink3)">📊 Asistencia: <strong style="color:var(--green)">3/3 part</strong> · <strong style="color:var(--ink2)">5/5 ent</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item on"><div class="nav-ic">🏠</div>Mis Hijos</div>
+        <div class="nav-item"><div class="nav-ic">📋</div>Convocatoria</div>
+        <div class="nav-item"><div class="nav-ic">📺</div>En Vivo</div>
+        <div class="nav-item"><div class="nav-ic">👤</div>Perfil</div>
+      </div>
+    </div>
+    <div class="change-notes">
+      <strong>Cambios:</strong> "Límite vencido" ahora es amarillo/warning (no rojo/error). Se agregó mini-stats de asistencia por hijo. Las cards son más completas: toda la info del hijo + convocatoria + RSVP en un solo bloque.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- PADRE — CONVOCATORIA (sin sub-tabs) -->
+<!-- ============================================ -->
+<div class="screen-pair" id="padre-conv">
+  <div class="screen-col">
+    <span class="screen-label after">PROPUESTA</span>
+    <div class="phone">
+      <div class="hdr hdr-padre">
+        <div class="hdr-ico">⚽</div>
+        <div class="hdr-info">
+          <div class="hdr-name">Mis Hijos</div>
+          <div class="hdr-sub">Martín Díaz · Papá</div>
+        </div>
+        <div class="hdr-actions"><button class="hdr-btn">👤</button></div>
+      </div>
+      <div class="content">
+        <!-- Kid selector -->
+        <div style="display:flex;gap:6px;margin-bottom:14px">
+          <button class="btn-sm" style="background:var(--green-light);color:var(--green);border-color:var(--green)">Facundo</button>
+          <button class="btn-sm">Rodrigo</button>
+        </div>
+
+        <!-- Single scrollable page, no sub-tabs -->
+        <div class="conv-hero-compact" style="background:linear-gradient(135deg,var(--green),#0f5132)">
+          <div class="top">
+            <span class="bdg" style="background:rgba(255,255,255,.2);color:#fff;font-size:9px">PARTIDO</span>
+            <div class="rival">vs. Atlético Norte</div>
+          </div>
+          <div class="meta">
+            <span>📅 22 Feb · 🕐 10:00hs · 📍 Cancha A</span>
+          </div>
+        </div>
+
+        <!-- RSVP -->
+        <div class="card card-p" style="text-align:center">
+          <div style="font-size:13px;font-weight:600;margin-bottom:10px">¿Facundo va a asistir?</div>
+          <div style="display:flex;gap:8px;justify-content:center">
+            <button class="rsvp-btn rsvp-si on" style="padding:10px 24px;font-size:14px">✓ SÍ ASISTE</button>
+            <button class="rsvp-btn rsvp-no" style="padding:10px 24px;font-size:14px">✗ NO PUEDE</button>
+          </div>
+          <div style="font-size:10px;color:var(--ink4);margin-top:6px">Toca para cambiar</div>
+        </div>
+
+        <!-- Chat inline (no separate tab) -->
+        <div class="slbl" style="margin-top:14px">💬 Chat del equipo</div>
+        <div class="card card-p">
+          <div class="chat-area">
+            <div class="msg">
+              <div class="msg-av" style="background:#1e293b">CM</div>
+              <div>
+                <div class="msg-who">Carlos Méndez <span class="msg-dt-badge">DT</span></div>
+                <div class="msg-bub dt">Recuerden llegar 20 min antes. Traigan agua y rodilleras.</div>
+              </div>
+              <div class="msg-t">9:15</div>
+            </div>
+            <div class="msg">
+              <div class="msg-av" style="background:#888">MD</div>
+              <div>
+                <div class="msg-who">Martín Díaz</div>
+                <div class="msg-bub them">DT, Facundo llega 10 min tarde.</div>
+              </div>
+              <div class="msg-t">9:42</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:8px">
+            <input style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:20px;font-family:var(--f-body);font-size:12px" placeholder="Escribí un mensaje...">
+            <button style="width:36px;height:36px;border-radius:50%;background:var(--green);border:none;color:#fff;font-size:14px;cursor:pointer">➤</button>
+          </div>
+        </div>
+
+        <!-- Quick links -->
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn-sm" style="flex:1;justify-content:center">👥 Ver equipo</button>
+          <button class="btn-sm" style="flex:1;justify-content:center">📊 Mi hijo</button>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item"><div class="nav-ic">🏠</div>Mis Hijos</div>
+        <div class="nav-item on"><div class="nav-ic">📋</div>Convocatoria</div>
+        <div class="nav-item"><div class="nav-ic">📺</div>En Vivo</div>
+        <div class="nav-item"><div class="nav-ic">👤</div>Perfil</div>
+      </div>
+    </div>
+    <div class="change-notes">
+      <strong>Cambios:</strong> Se eliminaron 3 sub-tabs (Convocatoria/Equipo/Mi hijo). Ahora es una sola pantalla scrolleable: hero + RSVP + chat + links secundarios. El padre ve todo sin tocar tabs. "Ver equipo" y "Mi hijo" son links al fondo.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- PADRE — EN VIVO (simplificado) -->
+<!-- ============================================ -->
+<div class="screen-pair" id="padre-live">
+  <div class="screen-col">
+    <span class="screen-label after">PROPUESTA</span>
+    <div class="phone">
+      <div class="hdr hdr-padre">
+        <div class="hdr-ico">⚽</div>
+        <div class="hdr-info">
+          <div class="hdr-name">Mis Hijos</div>
+          <div class="hdr-sub">Martín Díaz · Papá</div>
+        </div>
+        <div class="hdr-actions"><button class="hdr-btn">👤</button></div>
+      </div>
+      <div class="content">
+        <div class="score-compact">
+          <div class="score-team">Los Pumas A</div>
+          <div class="score-num">0</div>
+          <div class="score-sep">—</div>
+          <div class="score-num">0</div>
+          <div class="score-team">Deportivo Sur</div>
+        </div>
+        <div style="text-align:center;margin-bottom:14px">
+          <span style="font-size:10px;padding:3px 10px;border-radius:10px;background:#fef3c7;color:#92400e;font-weight:600">🔴 En vivo · 2do tiempo · 23:45</span>
+        </div>
+
+        <!-- Only 2 tabs: En vivo | Fotos -->
+        <div class="inline-tabs">
+          <div class="inline-tab on">En vivo</div>
+          <div class="inline-tab">📷 Fotos</div>
+        </div>
+
+        <!-- Events -->
+        <div class="slbl">Eventos del partido</div>
+        <div class="card" style="margin-bottom:14px">
+          <div style="text-align:center;padding:24px;color:var(--ink4);font-size:12px">
+            ⏳ Sin eventos registrados todavía
+          </div>
+        </div>
+
+        <!-- Chat -->
+        <div class="slbl">💬 Reacciones</div>
+        <div class="card card-p">
+          <div class="chat-area">
+            <div class="msg">
+              <div class="msg-av" style="background:#1e293b">CM</div>
+              <div>
+                <div class="msg-who">Carlos Méndez <span class="msg-dt-badge">DT</span></div>
+                <div class="msg-bub dt">Recuerden llegar 20 min antes. Traigan agua y rodilleras.</div>
+              </div>
+              <div class="msg-t">9:15</div>
+            </div>
+            <div class="msg">
+              <div class="msg-av" style="background:#888">MD</div>
+              <div>
+                <div class="msg-who">Martín Díaz</div>
+                <div class="msg-bub them">DT, Facundo llega 10 min tarde, tiene turno médico.</div>
+              </div>
+              <div class="msg-t">9:42</div>
+            </div>
+            <div class="msg">
+              <div class="msg-av" style="background:#1e293b">CM</div>
+              <div>
+                <div class="msg-who">Carlos Méndez <span class="msg-dt-badge">DT</span></div>
+                <div class="msg-bub dt">Sin problema Martín, avisame cuando estén llegando.</div>
+              </div>
+              <div class="msg-t">9:50</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:8px">
+            <input style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:20px;font-family:var(--f-body);font-size:12px" placeholder="Escribí un mensaje...">
+            <button style="width:36px;height:36px;border-radius:50%;background:var(--green);border:none;color:#fff;font-size:14px;cursor:pointer">➤</button>
+          </div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item"><div class="nav-ic">🏠</div>Mis Hijos</div>
+        <div class="nav-item"><div class="nav-ic">📋</div>Convocatoria</div>
+        <div class="nav-item on"><div class="nav-ic">📺</div>En Vivo</div>
+        <div class="nav-item"><div class="nav-ic">👤</div>Perfil</div>
+      </div>
+    </div>
+    <div class="change-notes">
+      <strong>Cambios:</strong> Se redujeron sub-tabs de 5 (En vivo/Formación/Plantel/Stats/Fotos) a 2 (En vivo/Fotos). El padre no necesita ver formación ni plantel. El chat está integrado directamente debajo de los eventos.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- PADRE — PERFIL -->
+<!-- ============================================ -->
+<div class="screen-pair" id="padre-perfil">
+  <div class="screen-col">
+    <span class="screen-label after">PROPUESTA</span>
+    <div class="phone">
+      <div class="hdr hdr-padre">
+        <div class="hdr-ico">⚽</div>
+        <div class="hdr-info">
+          <div class="hdr-name">Mis Hijos</div>
+          <div class="hdr-sub">Martín Díaz · Papá</div>
+        </div>
+        <div class="hdr-actions"><button class="hdr-btn">👤</button></div>
+      </div>
+      <div class="content">
+        <div style="text-align:center;padding:8px 0 20px">
+          <div class="av" style="width:64px;height:64px;font-size:22px;background:#1e293b;margin:0 auto 10px">MD</div>
+          <div style="font-size:17px;font-weight:700">Martín Díaz</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:3px">Papá</div>
+        </div>
+
+        <div class="slbl">Mis hijos</div>
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-row">
+            <div class="av" style="width:38px;height:38px;font-size:13px;background:var(--green)">FD</div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:700">Facundo Díaz</div><div style="font-size:11px;color:var(--ink3)">Los Pumas A · Sub-12</div></div>
+            <button class="btn-sm">Ver →</button>
+          </div>
+          <div class="card-row">
+            <div class="av" style="width:38px;height:38px;font-size:13px;background:#8e44ad">RS</div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:700">Rodrigo Silva</div><div style="font-size:11px;color:var(--ink3)">Los Pumas · Sub-10</div></div>
+            <button class="btn-sm">Ver →</button>
+          </div>
+        </div>
+
+        <div class="slbl">Co-responsables</div>
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-row">
+            <div class="av" style="width:34px;height:34px;font-size:11px;background:#e5e7eb;color:#374151">LD</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Laura Díaz</div><div style="font-size:10px;color:var(--ink3)">Mamá de Facundo</div></div>
+          </div>
+          <div class="card-row">
+            <div class="av" style="width:34px;height:34px;font-size:11px;background:#e5e7eb;color:#374151">AS</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">Ana Silva</div><div style="font-size:10px;color:var(--ink3)">Mamá de Rodrigo</div></div>
+          </div>
+          <!-- New: invite button -->
+          <div style="padding:10px 13px;border-top:1px solid var(--border)">
+            <button class="btn-sm" style="width:100%;justify-content:center">+ Invitar co-responsable</button>
+          </div>
+        </div>
+
+        <div class="slbl">Configuración</div>
+        <div class="card card-p">
+          <button class="btn btn-o" style="color:#c0392b;border-color:#f5b8b8;margin-bottom:8px">Borrar datos locales</button>
+          <button class="btn btn-o" style="color:#c0392b;border-color:#f5b8b8">🚪 Cerrar sesión</button>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item"><div class="nav-ic">🏠</div>Mis Hijos</div>
+        <div class="nav-item"><div class="nav-ic">📋</div>Convocatoria</div>
+        <div class="nav-item"><div class="nav-ic">📺</div>En Vivo</div>
+        <div class="nav-item on"><div class="nav-ic">👤</div>Perfil</div>
+      </div>
+    </div>
+    <div class="change-notes">
+      <strong>Cambios:</strong> Se agregó botón "Invitar co-responsable" debajo de la sección (antes no era accionable). Config limpio sin role switch (no relevante en producción).
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- COORD — CALENDARIO (sin cambios) -->
+<!-- ============================================ -->
+<div class="screen-pair" id="coord-cal">
+  <div class="screen-col">
+    <span class="screen-label after">SIN CAMBIOS</span>
+    <div class="phone">
+      <div class="hdr hdr-coord">
+        <div class="hdr-ico" style="background:none">
+          <svg viewBox="0 0 40 40" width="28" height="28"><polygon points="20,2 38,14 31,35 9,35 2,14" fill="none" stroke="#F26419" stroke-width="2.5" stroke-linejoin="round"/><text x="20" y="27" text-anchor="middle" font-family="DM Serif Display" font-size="20" font-weight="400" fill="#F26419">S</text></svg>
+        </div>
+        <div class="hdr-info"><div class="hdr-name">Club Náutico San Isidro</div><div class="hdr-sub">Coordinador · 3 equipos</div></div>
+        <div class="hdr-actions"><button class="hdr-btn">🔔</button><button class="hdr-btn">👤</button></div>
+      </div>
+      <div class="content">
+        <div style="text-align:center;padding:40px 20px;color:var(--ink3)">
+          <div style="font-size:40px;margin-bottom:12px">📅</div>
+          <div style="font-size:14px;font-weight:600;color:var(--ink)">Calendario</div>
+          <div style="font-size:12px;margin-top:4px;line-height:1.5">Esta pantalla funciona bien como está. La vista semanal con dots y tarjetas de eventos es clara.</div>
+          <div style="font-size:11px;color:var(--sq-orange);margin-top:12px;font-weight:600">Ver el actual en el preview ↗</div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item"><div class="nav-ic">🏠</div>Club</div>
+        <div class="nav-item"><div class="nav-ic">🗂</div>Gestión</div>
+        <div class="nav-item on"><div class="nav-ic">📅</div>Calendario</div>
+        <div class="nav-item"><div class="nav-ic">📊</div>Estadísticas</div>
+      </div>
+    </div>
+    <div class="change-notes">
+      <strong>Estado:</strong> El calendario está bien como está. La vista semanal funciona. Nav: "Perfil" → "📊 Estadísticas".
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- COORD — ESTADÍSTICAS -->
+<!-- ============================================ -->
+<div class="screen-pair" id="coord-perfil">
+  <div class="screen-col">
+    <span class="screen-label after">PROPUESTA</span>
+    <div class="phone">
+      <div class="hdr hdr-coord">
+        <div class="hdr-ico" style="background:none">
+          <svg viewBox="0 0 40 40" width="28" height="28"><polygon points="20,2 38,14 31,35 9,35 2,14" fill="none" stroke="#F26419" stroke-width="2.5" stroke-linejoin="round"/><text x="20" y="27" text-anchor="middle" font-family="DM Serif Display" font-size="20" font-weight="400" fill="#F26419">S</text></svg>
+        </div>
+        <div class="hdr-info"><div class="hdr-name">Club Náutico San Isidro</div><div class="hdr-sub">Coordinador · 3 equipos</div></div>
+        <div class="hdr-actions"><button class="hdr-btn">🔔</button><button class="hdr-btn">👤</button></div>
+      </div>
+      <div class="content">
+        <!-- Sub-tabs -->
+        <div style="display:flex;gap:0;border-bottom:1px solid var(--border);background:#fff">
+          <div style="flex:1;text-align:center;padding:10px 0;font-size:12px;font-weight:700;color:var(--sq-orange);border-bottom:2px solid var(--sq-orange)">Estadísticas</div>
+          <div style="flex:1;text-align:center;padding:10px 0;font-size:12px;font-weight:500;color:var(--ink3)">Torneos</div>
+        </div>
+        <!-- Resumen club -->
+        <div class="sec">
+          <div class="slbl">Resumen del club</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+            <div class="card" style="padding:12px;text-align:center">
+              <div style="font-size:22px;font-weight:800;color:var(--green)">3</div>
+              <div style="font-size:10px;color:var(--ink3)">Equipos</div>
+            </div>
+            <div class="card" style="padding:12px;text-align:center">
+              <div style="font-size:22px;font-weight:800;color:var(--sq-orange)">47</div>
+              <div style="font-size:10px;color:var(--ink3)">Jugadores</div>
+            </div>
+            <div class="card" style="padding:12px;text-align:center">
+              <div style="font-size:22px;font-weight:800;color:var(--ink)">18</div>
+              <div style="font-size:10px;color:var(--ink3)">Partidos</div>
+            </div>
+          </div>
+          <!-- Record -->
+          <div class="card" style="padding:12px 13px">
+            <div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:8px">RÉCORD GENERAL</div>
+            <div style="display:flex;gap:12px;font-size:13px;font-weight:700">
+              <span style="color:var(--green)">10V</span>
+              <span style="color:var(--ink3)">4E</span>
+              <span style="color:var(--red)">4D</span>
+            </div>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="slbl">Por equipo</div>
+          <div class="card" style="padding:0">
+            <div style="padding:12px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)">
+              <div class="av" style="width:28px;height:28px;font-size:10px;background:var(--green)">12</div>
+              <div style="flex:1"><div style="font-size:12px;font-weight:700">Sub-12</div></div>
+              <span style="font-size:11px;color:var(--green);font-weight:700">5V 2E 1D</span>
+            </div>
+            <div style="padding:12px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)">
+              <div class="av" style="width:28px;height:28px;font-size:10px;background:var(--sq-orange)">10</div>
+              <div style="flex:1"><div style="font-size:12px;font-weight:700">Sub-10</div></div>
+              <span style="font-size:11px;color:var(--green);font-weight:700">3V 1E 2D</span>
+            </div>
+            <div style="padding:12px 13px;display:flex;align-items:center;gap:10px">
+              <div class="av" style="width:28px;height:28px;font-size:10px;background:#6366f1">8</div>
+              <div style="flex:1"><div style="font-size:12px;font-weight:700">Sub-8</div></div>
+              <span style="font-size:11px;color:var(--ink3);font-weight:700">2V 1E 1D</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav">
+        <div class="nav-item"><div class="nav-ic">🏠</div>Club</div>
+        <div class="nav-item"><div class="nav-ic">🗂</div>Gestión</div>
+        <div class="nav-item"><div class="nav-ic">📅</div>Calendario</div>
+        <div class="nav-item on"><div class="nav-ic">📊</div>Estadísticas</div>
+      </div>
+    </div>
+    <div class="change-notes">
+      <strong>Cambios:</strong> Tab renombrado "Perfil" → "📊 Estadísticas". Ahora muestra resumen del club + récord + desglose por equipo. Perfil/Config se acceden desde el 👤 del header. Sub-tabs: Estadísticas | Torneos.
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.screen-pair').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelectorAll('.mockup-nav button').forEach(function(btn) { btn.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  document.getElementById('btn-' + id.replace(/-/g, '-')).classList.add('active');
+  // Try finding the button
+  var btn = document.getElementById('btn-' + id);
+  if (btn) btn.classList.add('active');
+}
+// Show first screen by default
+show('coord-club');
+</script>
+
+</body>
+</html>
