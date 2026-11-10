@@ -854,6 +854,8 @@ function citOf(cv){if(!cv||cv.tipo==="entrenamiento")return"";return cv.cit||(cv
 function horaTxt(cv){var c=citOf(cv);return c?"Citación "+c+" · "+(cv.tipo==="partido"?"Partido":"Inicio")+" "+cv.hora+"hs":cv.hora+"hs"}
 function horaTile(cv,ico){var c=citOf(cv);if(!c)return'<div class="hero-meta-item"><div class="hero-meta-lbl">Hora</div><div class="hero-meta-val">'+(ico?'⏰ ':'')+cv.hora+'hs</div></div>';
 return'<div class="hero-meta-item"><div class="hero-meta-lbl">Citación · '+(cv.tipo==="partido"?"Partido":"Inicio")+'</div><div class="hero-meta-val">'+(ico?'⏰ ':'')+c+' · '+cv.hora+'hs</div></div>'}
+function minField(id,t,fmt){var def=fmtMin(fmt||(t?t.fmt:"8v8"));return'<div class="inp-lbl">Mínimo de confirmados</div><input id="'+id+'" class="inp" type="number" min="1" max="30" inputmode="numeric" placeholder="'+def+'" value="'+(t&&t.minConf?t.minConf:"")+'"><div style="font-size:11px;color:var(--ink3);margin:-4px 0 10px">Con menos, el equipo figura como corto. Vacío = '+def+' (lo que pide el formato).</div>'}
+function readMin(id){var e=document.getElementById(id);if(!e)return undefined;var v=parseInt(e.value,10);return v>0?v:null}
 function fCV(tmid,cvid){var t=gT(tmid);for(var i=0;i<t.cv.length;i++)if(t.cv[i].id===cvid)return t.cv[i];return null}
 // Convocatoria activa: la de hoy o la proxima por fecha/hora (no cancelada). Con jid, solo las que incluyen a ese jugador.
 function actCV(tmid,jid){var t=gT(tmid||TID),best=null;for(var i=0;i<t.cv.length;i++){var c=t.cv[i];if(c.can||c.fecha<TODAY)continue;if(jid!==undefined&&c.jug.indexOf(jid)===-1)continue;if(!best||c.fecha<best.fecha||(c.fecha===best.fecha&&(c.hora||"")<(best.hora||"")))best=c}return best}
@@ -1274,6 +1276,7 @@ function openNewTeam(){
     +'<div class="inp-lbl">Formato</div>'
     +'<select id="nt-fmt" class="inp"><option>8v8</option><option>7v7</option><option>11v11</option><option>6v6</option><option>5v5</option></select>'
     +'<div class="inp-lbl">Duración de cada tiempo (min)</div><input id="nt-dur" class="inp" placeholder="25" type="number" min="10" max="45">'
+    +minField('nt-min',null,'8v8')
     +'<button class="btn btn-p" onclick="saveNewTeam()">Crear equipo</button>'
     +'</div>')
 }
@@ -1282,10 +1285,12 @@ async function saveNewTeam(){
   var fmt=document.getElementById('nt-fmt').value;
   var dur=parseInt(document.getElementById('nt-dur').value)||25;
   if(!name){toast('⚠ Ponele un nombre','#e67e00');return}
-  var parts=(_cgCat||'Sub-12 2014').split(' ');
-  var cat=parts.slice(0,-1).join(' ');var anio=parts[parts.length-1];
+  // Categoria y año: los de la categoria abierta (antes se partia el texto y quedaban mal)
+  var ref=TEAMS.filter(function(x){return x.cat===_cgCat})[0];
+  var cat=_cgCat||(ref?ref.cat:'');var anio=ref?ref.anio:'';
   var newId=Date.now();
-  var nt={id:newId,name:name,cat:cat,anio:anio,tmp:'2026',color:'#0e7490',fmt:fmt,dur:dur,staff:[],j:[],cv:[],md:{pre:{},form:'3-3',slots:{},min:0,ev:[],us:0,them:0,res:''},stats:{pj:0,v:0,e:0,d:0,att:0}};
+  var mn=readMin('nt-min');
+  var nt={id:newId,name:name,cat:cat,anio:anio,tmp:'2026',color:'#0e7490',fmt:fmt,dur:dur,minConf:mn||undefined,staff:[],j:[],cv:[],md:{pre:{},form:'3-3',slots:{},min:0,ev:[],us:0,them:0,res:''},stats:{pj:0,v:0,e:0,d:0,att:0}};
   if(SB_MODE){var r=await sbCreateTeam(nt);if(r){nt._uuid=r.id;nt.id=toInt(r.id)}}
   TEAMS.push(nt);
   closeOverlay();_cgTid=nt.id;_cgSec='equipo';render();toast('✅ Equipo creado')
@@ -1293,15 +1298,16 @@ async function saveNewTeam(){
 
 function openEditTeam(tid){
   var t=gT(tid);
-  var colors=['#1a7a3c','#0e7490','#1a56a0','#c0392b','#8e44ad','#e67e00','#2c3e50'];
-  var cOpts=colors.map(function(c){return'<div onclick="window._editTc=\''+c+'\'" style="width:28px;height:28px;border-radius:50%;background:'+c+';cursor:pointer;border:3px solid '+(t.color===c?'#111':'transparent')+'" id="ec'+c.slice(1)+'"></div>'}).join('');
+  var colors=['#0B2A4A','#0077B6','#1a7a3c','#1a56a0','#c0392b','#8e44ad','#e67e00','#2c3e50'];
+  var cOpts=colors.map(function(c){return'<div role="button" aria-label="Color '+c+'" onclick="window._editTc=\''+c+'\';[].forEach.call(this.parentNode.children,function(x){x.style.borderColor=\'transparent\'});this.style.borderColor=\'#111\'" style="width:28px;height:28px;border-radius:50%;background:'+c+';cursor:pointer;border:3px solid '+(t.color===c?'#111':'transparent')+'" id="ec'+c.slice(1)+'"></div>'}).join('');
   showOverlay(mHdr('Editar '+t.name)+'<div class="modal-body">'
     +'<div class="inp-lbl">Nombre</div><input id="et-name" class="inp" value="'+t.name+'">'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
-    +'<div><div class="inp-lbl">Formato</div><select id="et-fmt" class="inp" style="margin:0"><option'+(t.fmt==='7v7'?' selected':'')+'>7v7</option><option'+(t.fmt==='11v11'?' selected':'')+'>11v11</option><option'+(t.fmt==='6v6'?' selected':'')+'>6v6</option><option'+(t.fmt==='5v5'?' selected':'')+'>5v5</option></select></div>'
+    +'<div><div class="inp-lbl">Formato</div><select id="et-fmt" class="inp" style="margin:0"><option'+(t.fmt==='8v8'?' selected':'')+'>8v8</option><option'+(t.fmt==='7v7'?' selected':'')+'>7v7</option><option'+(t.fmt==='11v11'?' selected':'')+'>11v11</option><option'+(t.fmt==='6v6'?' selected':'')+'>6v6</option><option'+(t.fmt==='5v5'?' selected':'')+'>5v5</option></select></div>'
     +'<div><div class="inp-lbl">Dur. tiempo</div><input id="et-dur" class="inp" style="margin:0" type="number" value="'+t.dur+'"></div>'
     +'</div>'
-    +'<div class="inp-lbl" style="margin-top:10px">Color</div>'
+    +'<div style="height:10px"></div>'+minField('et-min',t)
+    +'<div class="inp-lbl">Color</div>'
     +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">'+cOpts+'</div>'
     +'<button class="btn btn-p" onclick="saveEditTeam('+tid+')">Guardar</button>'
     +'</div>');
@@ -1312,6 +1318,7 @@ function saveEditTeam(tid){
   var n=document.getElementById('et-name');var f=document.getElementById('et-fmt');var d=document.getElementById('et-dur');
   if(n)t.name=n.value;if(f)t.fmt=f.value;if(d)t.dur=parseInt(d.value)||t.dur;
   if(window._editTc)t.color=window._editTc;
+  var mn=readMin('et-min');if(mn!==undefined){if(mn)t.minConf=mn;else delete t.minConf}
   if(SB_MODE)sbSaveTeam(t);
   closeOverlay();applyTheme();render();toast('✅ Equipo actualizado')
 }
@@ -2233,12 +2240,13 @@ function openSettings(){
     +'<div><div class="inp-lbl">Categoría</div><input class="inp" id="cfg-cat" style="margin:0" value="'+t.cat+'"></div>'
     +'<div><div class="inp-lbl">Año</div><input class="inp" id="cfg-anio" style="margin:0" value="'+t.anio+'"></div>'
     +'</div>'
-    +'<div class="inp-lbl" style="margin-top:10px">Color del equipo</div>'
+    +'<div style="height:10px"></div>'+minField('cfg-min',t)
+    +'<div class="inp-lbl">Color del equipo</div>'
     +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">'+cOpts+'</div>'
     +'<button class="btn btn-p" onclick="saveSettings()">Guardar</button>'
     +'</div>')
 }
-function saveSettings(){var t=T();var n=document.getElementById("cfg-name"),c=document.getElementById("cfg-cat"),a=document.getElementById("cfg-anio");if(n)t.name=n.value;if(c)t.cat=c.value;if(a)t.anio=a.value;if(SB_MODE)sbSaveTeam(t);applyTheme();closeOverlay();toast("✅ Guardado")}
+function saveSettings(){var t=T();var n=document.getElementById("cfg-name"),c=document.getElementById("cfg-cat"),a=document.getElementById("cfg-anio");if(n)t.name=n.value;if(c)t.cat=c.value;if(a)t.anio=a.value;var mn=readMin("cfg-min");if(mn!==undefined){if(mn)t.minConf=mn;else delete t.minConf}if(SB_MODE)sbSaveTeam(t);applyTheme();render();closeOverlay();toast("✅ Guardado")}
 
 function openWz(eid,did){
   var d=new Date();var nw=new Date(d);var lm=new Date(d);nw.setDate(d.getDate()+7);lm.setDate(d.getDate()+5);
