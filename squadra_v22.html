@@ -970,7 +970,8 @@ function T(){return gT(TID)}
 function gSt(id){for(var i=0;i<SP.length;i++)if(SP[i].id===id)return SP[i];return null}
 function fJ(tmid,jid){var t=gT(tmid);for(var i=0;i<t.j.length;i++)if(t.j[i].id===jid)return t.j[i];return null}
 function fCV(tmid,cvid){var t=gT(tmid);for(var i=0;i<t.cv.length;i++)if(t.cv[i].id===cvid)return t.cv[i];return null}
-function actCV(tmid){var t=gT(tmid||TID);for(var i=0;i<t.cv.length;i++)if(!t.cv[i].can)return t.cv[i];return null}
+// Convocatoria activa: la de hoy o la proxima por fecha/hora (no cancelada). Con jid, solo las que incluyen a ese jugador.
+function actCV(tmid,jid){var t=gT(tmid||TID),best=null;for(var i=0;i<t.cv.length;i++){var c=t.cv[i];if(c.can||c.fecha<TODAY)continue;if(jid!==undefined&&c.jug.indexOf(jid)===-1)continue;if(!best||c.fecha<best.fecha||(c.fecha===best.fecha&&(c.hora||"")<(best.hora||"")))best=c}return best}
 function todayCV(tmid){var t=gT(tmid||TID);for(var i=0;i<t.cv.length;i++)if(!t.cv[i].can&&t.cv[i].fecha===TODAY)return t.cv[i];return null}
 function gCh(id){for(var i=0;i<CHILDREN.length;i++)if(CHILDREN[i].id===(id||CID))return CHILDREN[i];return CHILDREN[0]}
 function gAcct(id){for(var i=0;i<ACCOUNTS.length;i++)if(ACCOUNTS[i].id===(id||ACCT_ID))return ACCOUNTS[i];return ACCOUNTS[0]}
@@ -983,7 +984,7 @@ function torneoBdg(cv){if(!cv.torneo_id)return'';var tn=TORNEOS.find(function(x)
 function histRes(it){var d=it.res.us-it.res.gc;return d>0?"V":d===0?"E":"D"}
 function unread(){return ALERTS.filter(function(a){return!a.read}).length}
 function invLink(tid,jid){return"conv.app/"+tid+"/"+jid}
-function jumpDT(tid){TID=tid;NAV=0;setRole("dt")}
+function jumpDT(tid){TID=tid;setRole("dt");window._dtTeamSelected=true;applyTheme();render()}
 function sendMsg(){var ta=document.getElementById("msg-t");if(!ta||!ta.value.trim()){toast("Escribí un mensaje");return}toast("Mensaje enviado");ta.value=""}
 
 // ============================================
@@ -1337,7 +1338,7 @@ function rCoordClub(){
     var cv=actCV(t.id);
     var stIc=st==="listo"?"✅":st==="corto"?"⚠️":"—";
     var stTxt=st==="listo"?"Listo":st==="corto"?"Incompleto":"Sin convocatoria";
-    h+='<div class="team-row" onclick="TID='+t.id+';setRole(\'dt\')">'
+    h+='<div class="team-row" onclick="jumpDT('+t.id+')">'
       +'<div class="team-dot" style="background:'+t.color+'">'+t.name.charAt(0)+'</div>'
       +'<div style="flex:1"><div style="font-size:13px;font-weight:600">'+t.name+'</div>'
       +'<div style="font-size:10px;color:var(--ink3)">'+t.cat+' '+t.anio+'</div></div>'
@@ -2461,7 +2462,7 @@ function rPadreHome(){
 
   kids.forEach(function(kid){
     var ch=gCh(kid);var t=gT(ch.tid);
-    var cv=null;for(var i=0;i<t.cv.length;i++)if(!t.cv[i].can&&t.cv[i].jug.indexOf(ch.jid)!==-1){cv=t.cv[i];break}
+    var cv=actCV(t.id,ch.jid);
     var r=cv?(cv.resp[ch.jid]||"pendiente"):null;
     var hasToday=!!(cv&&cv.fecha===TODAY);
     var afl=cv&&afLimit(cv);
@@ -2547,7 +2548,7 @@ function rPadreHome(){
 function qRsvp(kid,r,e){
   e.stopPropagation();
   var ch=gCh(kid);var t=gT(ch.tid);
-  var cv=null;for(var i=0;i<t.cv.length;i++)if(!t.cv[i].can&&t.cv[i].jug.indexOf(ch.jid)!==-1){cv=t.cv[i];break}
+  var cv=actCV(t.id,ch.jid);
   if(!cv)return;var acct=gAcct(ACCT_ID);
   recordRsvp(cv,ch.jid,r,acct);
   if(afLimit(cv))ALERTS.unshift({id:Date.now(),tipo:"rsvp",msg:ch.n+" confirmó "+r+" después del límite",f:"Ahora",read:false});
@@ -2578,7 +2579,7 @@ function rPadreConv(){
     kids.forEach(function(kid){var ch2=gCh(kid);var t2=gT(ch2.tid);tabbar+='<button class="chip '+(CID===kid?"chip-on":"chip-off")+'" onclick="CID='+kid+';applyTheme();render()">'+ch2.n.split(" ")[0]+'</button>'});
     tabbar+='</div>'
   }
-  var cv=null;for(var i=0;i<t.cv.length;i++)if(!t.cv[i].can&&t.cv[i].jug.indexOf(ch.jid)!==-1){cv=t.cv[i];break}
+  var cv=actCV(t.id,ch.jid);
   var h=tabbar+'<div class="sec">';
   
   if(!_pTabCid[CID])_pTabCid[CID]="conv";var ptab=_pTabCid[CID];
@@ -2658,7 +2659,7 @@ function rPConvTab(ch,t,cv){
 
 function pRsvp(r){
   var ch=gCh(CID);var t=gT(ch.tid);
-  var cv=null;for(var i=0;i<t.cv.length;i++)if(!t.cv[i].can&&t.cv[i].jug.indexOf(ch.jid)!==-1){cv=t.cv[i];break}
+  var cv=actCV(t.id,ch.jid);
   if(!cv)return;var acct=gAcct(ACCT_ID);
   recordRsvp(cv,ch.jid,r,acct);
   if(afLimit(cv))ALERTS.unshift({id:Date.now(),tipo:"rsvp",msg:ch.n+" confirmó "+r+" después del límite",f:"Ahora",read:false});
@@ -2760,7 +2761,7 @@ function rPadreLive(){
   var cv=null;for(var i=0;i<t.cv.length;i++)if(!t.cv[i].can&&t.cv[i].fecha===TODAY){cv=t.cv[i];break}
   if(!cv){
     
-    var nextCv=null;for(var i=0;i<t.cv.length;i++)if(!t.cv[i].can){nextCv=t.cv[i];break}
+    var nextCv=actCV(t.id);
     var h='<div class="sec"><div class="empty"><div class="empty-ic">📅</div><div class="empty-ttl">Sin partido hoy</div>'
       +(nextCv?'<div class="empty-sub">Próximo partido: '+nextCv.rival+'<br>'+fmt(nextCv.fecha)+' · '+nextCv.hora+'hs</div>':'<div class="empty-sub">No hay partidos programados próximamente.</div>')
       +'</div></div>';
@@ -3867,21 +3868,8 @@ previewHtml+='</div>';
 showOverlay(mHdr("Compartir convocatoria")+'<div class="modal-body" style="padding:0">'+previewHtml+'</div>');}
 
 
-// Auth-aware init
-(async function(){
-  if(sb){
-    try{
-      var sess=await sb.auth.getSession();
-      if(sess.data.session){
-        SB_USER=sess.data.session.user;
-        await loadProfile();
-        return;
-      }
-    }catch(e){console.warn("Session check failed:",e)}
-  }
-  // No session or no Supabase → show auth
-  renderAuth();
-})();
+// Arranque directo en modo demo (login de Supabase desactivado hasta definir backend)
+enterDemo();
 </script>
 </body>
 </html>
