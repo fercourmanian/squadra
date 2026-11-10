@@ -851,7 +851,7 @@ function tIni(t){return t.ini||t.name.split(" ").pop().slice(0,3)}
 function minConf(t){return t.minConf||fmtMin(t.fmt)}
 function cvCount(cv){var c={si:0,no:0,pd:0};cv.jug.forEach(function(id){var r=cv.resp[id]||"pendiente";if(r==="si")c.si++;else if(r==="no")c.no++;else c.pd++});return c}
 // Proximo partido/gira/torneo (sin entrenamientos), hoy o despues
-function matchCV(tmid){var t=gT(tmid||TID),best=null;for(var i=0;i<t.cv.length;i++){var c=t.cv[i];if(c.can||c.fecha<TODAY||c.tipo==="entrenamiento")continue;if(!best||c.fecha<best.fecha||(c.fecha===best.fecha&&(c.hora||"")<(best.hora||"")))best=c}return best}
+function matchCV(tmid){var t=gT(tmid||TID),best=null;for(var i=0;i<t.cv.length;i++){var c=t.cv[i];if(c.can||c.cerrado||c.fecha<TODAY||c.tipo==="entrenamiento")continue;if(!best||c.fecha<best.fecha||(c.fecha===best.fecha&&(c.hora||"")<(best.hora||"")))best=c}return best}
 // Equipos del DT actual (el DT principal del equipo activo)
 function myTeams(){var t=T();var sid=t.staff[0]?t.staff[0].sid:null;var a=TEAMS.filter(function(x){return x.staff.some(function(s){return s.sid===sid})});return a.length?a:[t]}
 function faltanTxt(t){var cv=matchCV(t.id);if(!cv)return"Sin convocatoria";var c=cvCount(cv),m=minConf(t);return c.si>=m?"Listo · "+c.si+"/"+m:c.si+"/"+m+" · faltan "+(m-c.si)}
@@ -871,7 +871,7 @@ function minField(id,t,fmt){var def=fmtMin(fmt||(t?t.fmt:"8v8"));return'<div cla
 function readMin(id){var e=document.getElementById(id);if(!e)return undefined;var v=parseInt(e.value,10);return v>0?v:null}
 function fCV(tmid,cvid){var t=gT(tmid);for(var i=0;i<t.cv.length;i++)if(t.cv[i].id===cvid)return t.cv[i];return null}
 // Convocatoria activa: la de hoy o la proxima por fecha/hora (no cancelada). Con jid, solo las que incluyen a ese jugador.
-function actCV(tmid,jid){var t=gT(tmid||TID),best=null;for(var i=0;i<t.cv.length;i++){var c=t.cv[i];if(c.can||c.fecha<TODAY)continue;if(jid!==undefined&&c.jug.indexOf(jid)===-1)continue;if(!best||c.fecha<best.fecha||(c.fecha===best.fecha&&(c.hora||"")<(best.hora||"")))best=c}return best}
+function actCV(tmid,jid){var t=gT(tmid||TID),best=null;for(var i=0;i<t.cv.length;i++){var c=t.cv[i];if(c.can||c.cerrado||c.fecha<TODAY)continue;if(jid!==undefined&&c.jug.indexOf(jid)===-1)continue;if(!best||c.fecha<best.fecha||(c.fecha===best.fecha&&(c.hora||"")<(best.hora||"")))best=c}return best}
 function todayCV(tmid){var t=gT(tmid||TID);for(var i=0;i<t.cv.length;i++)if(!t.cv[i].can&&t.cv[i].fecha===TODAY)return t.cv[i];return null}
 function gCh(id){for(var i=0;i<CHILDREN.length;i++)if(CHILDREN[i].id===(id||CID))return CHILDREN[i];return CHILDREN[0]}
 function gAcct(id){for(var i=0;i<ACCOUNTS.length;i++)if(ACCOUNTS[i].id===(id||ACCT_ID))return ACCOUNTS[i];return ACCOUNTS[0]}
@@ -1812,7 +1812,7 @@ function rDTConvs(){
   // Separate upcoming (fecha >= TODAY) and past
   var upcoming=[],past=[];
   cvs.forEach(function(cvItem){
-    if(cvItem.fecha>=TODAY&&!cvItem.can) upcoming.push(cvItem);
+    if(cvItem.fecha>=TODAY&&!cvItem.can&&!cvItem.cerrado) upcoming.push(cvItem);
     else past.push(cvItem);
   });
 
@@ -1831,6 +1831,7 @@ function rDTConvs(){
   // Past section
   if(past.length){
     h+='<div class="slbl" style="margin-top:18px">Anteriores</div>';
+    past.sort(function(a,b){return (b.fecha+(b.hora||""))>(a.fecha+(a.hora||""))?1:-1});
     var show=_dtConvViewAll?past:past.slice(0,3);
     show.forEach(function(cv){h+=rDTConvCard(cv,t)});
     if(past.length>3&&!_dtConvViewAll){
@@ -1985,7 +1986,7 @@ function shareWA(){var ta=document.getElementById("wa-txt");if(!ta)return;window
 
 function rDTMatch(){
 var cv=matchCV();
-if(!cv)return '<div class="sec"><div class="empty"><div class="ei">&#x26BD;</div><div class="et">Sin partidos próximos</div></div></div>';
+if(!cv)return '<div class="sec"><div class="empty" style="padding:24px 20px"><div class="ei">&#x26BD;</div><div class="et">Sin partidos próximos</div></div><div class="slbl">Anteriores</div>'+rHistList(TID)+'</div>';
 if(cv.tipo==='gira'||cv.tipo==='torneo')return rDTMatchGira(cv);
 var cc=cv.jug.filter(function(id){return cv.resp[id]==='si';});
 var subs=['presentes','form','partido','hist'];
@@ -2128,8 +2129,9 @@ function rPartido(cv,cc){
   h+='</div>';
   
   h+='<div class="slbl">Nota post-partido</div>'
-    +'<textarea class="inp" rows="3" style="resize:none" placeholder="Cómo jugamos, qué mejorar..." onchange="T().md.res=this.value">'+( md.res||"")+'</textarea>'
-    +'<button class="btn btn-p" onclick="toast(\'✅ Resultado guardado!\')">Guardar resultado</button>';
+    +'<textarea class="inp" rows="3" style="resize:none" placeholder="Cómo jugamos, qué mejorar..." id="nota-match" onchange="T().md.res=this.value">'+( md.res||"")+'</textarea>'
+    +'<button class="btn btn-p" onclick="closeNormalMatch()">💾 Guardar resultado</button>'
+    +'<div style="font-size:11px;color:var(--ink3);text-align:center;margin-top:6px">Guarda el marcador, los eventos y la nota en Anteriores, y cierra el partido.</div>';
   return h+'</div>'
 }
 
@@ -2529,7 +2531,7 @@ function rPadreHome(){
 }
 
 // Convocatorias de otros equipos donde el hijo esta como prestamo
-function loanCVs(ch){var g=gid(ch.tid,ch.jid),out=[];TEAMS.forEach(function(t){if(t.id===ch.tid)return;t.cv.forEach(function(c){if(!c.can&&c.fecha>=TODAY&&c.jug.indexOf(g)!==-1)out.push({t:t,cv:c,g:g})})});
+function loanCVs(ch){var g=gid(ch.tid,ch.jid),out=[];TEAMS.forEach(function(t){if(t.id===ch.tid)return;t.cv.forEach(function(c){if(!c.can&&!c.cerrado&&c.fecha>=TODAY&&c.jug.indexOf(g)!==-1)out.push({t:t,cv:c,g:g})})});
   out.sort(function(a,b){return a.cv.fecha+(a.cv.hora||"")<b.cv.fecha+(b.cv.hora||"")?-1:1});return out}
 function loanRsvp(tid,cvid,g,r,e){if(e)e.stopPropagation();var cv=fCV(tid,cvid);if(!cv)return;recordRsvp(cv,g,r,gAcct(ACCT_ID));saveState();render();toast(r==="si"?"✅ Confirmado (préstamo)":"❌ Ausencia registrada")}
 function rLoanCards(ch){var h="";loanCVs(ch).forEach(function(o){var cv=o.cv,t=o.t,r=cv.resp[o.g]||"pendiente";
@@ -3698,28 +3700,36 @@ var months=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","S
 var dt=new Date(d+"T12:00:00");
 return days[dt.getDay()]+" "+dt.getDate()+" de "+months[dt.getMonth()];}
 
-function autoSaveToHist(tid,cv,rival,us,them,evs){
+function autoSaveToHist(tid,cv,rival,us,them,evs,nota){
 if(!HIST[tid])HIST[tid]=[];
-var rivalFull="vs. "+rival;
+var rivalFull="vs. "+String(rival).replace(/^vs\.\s*/i,"");
+var evMap=(evs||[]).map(function(e){var jj=e.jid?fJ(tid,e.jid):null;return{tipo:e.tipo,jid:e.jid||null,desc:e.desc||(jj?jj.n+(jj.prest?" (préstamo)":""):""),min:e.min||0};});
 var fecha=cv.fechaInicio||cv.fecha||TODAY;
 var existing=HIST[tid].find(function(h){return h.rival===rivalFull&&h.fecha===fecha;});
-if(existing){existing.res={us:us,gc:them};saveState();return;}
+if(existing){existing.res={us:us,gc:them};if(evs)existing.ev=evMap;if(nota!==undefined)existing.nota=nota||"";saveState();return;}
 var entry={id:"auto_"+Date.now(),rival:rivalFull,fecha:fecha,
 tipo:cv.tipo==="gira"?"gira":"partido",res:{us:us,gc:them},
-ev:(evs||[]).map(function(e){return{tipo:e.tipo,desc:e.desc||"",min:e.min||0};}),nota:"",fotos:[]};
+ev:evMap,nota:nota||"",fotos:[]};
 HIST[tid].unshift(entry);
 if(SB_MODE){var t=gT(tid);if(t&&t._uuid)sbSaveHistory(entry,t._uuid)}
 saveState();}
 
 function closeNormalMatch(){
 var cv=matchCV(),t=T();if(!cv)return;
-if(!confirm("¿Cerrar partido y guardar en historial?"))return;
-var md=t.md;
+var md=t.md;var el=document.getElementById("nota-match");if(el)md.res=el.value;
+var us=md.us||0,them=md.them||0,rv=cv.rival.replace(/^vs\.\s*/i,"");
+if(!confirm("¿Guardar "+t.name+" "+us+" - "+them+" "+rv+" y cerrar el partido?"))return;
+clearInterval(TMR.iv);
 if(SB_MODE&&cv._uuid)sbSaveMatchDay(md,cv._uuid);
-autoSaveToHist(t.id,cv,cv.rival,md.us||0,md.them||0,md.ev||[]);
+autoSaveToHist(t.id,cv,cv.rival,us,them,md.ev||[],md.res||"");
+// El partido queda cerrado: sale de Match Day y de la convocatoria activa
+cv.cerrado=true;cv.res={us:us,them:them};
+if(!RESULTS[t.id])RESULTS[t.id]=[];RESULTS[t.id].unshift({r:cv.rival,gf:us,gc:them,f:fmt(cv.fecha)});
+if(t.stats){t.stats.pj=(t.stats.pj||0)+1;if(us>them)t.stats.v=(t.stats.v||0)+1;else if(us===them)t.stats.e=(t.stats.e||0)+1;else t.stats.d=(t.stats.d||0)+1;}
 t.md={pre:{},form:t.md.form,slots:{},min:0,ev:[],us:0,them:0,res:""};
 TMR={run:false,per:1,sec:0,iv:null,ht:false};
-saveState();render();toast("Guardado en historial");}
+window._dtMDTab="hist";
+saveState();render();toast("✅ Resultado guardado · "+us+" - "+them);}
 
 function saveMatchNota(){
 var t=T(),el=document.getElementById("nota-match");
